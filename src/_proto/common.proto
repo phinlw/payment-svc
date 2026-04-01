@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package common;
+import "query.proto";
+
+message QueryString {
+  query.QueryRequest query = 1;
+}
+
+message Id {
+  string id = 1;
+}
+
+message UserName {
+  string userName = 1;
+}
+
+message Empty {}
+
+message PageInfo {
+  string startCursor = 1;
+  string endCursor = 2;
+  bool hasNextPage = 3;
+  bool hasPreviousPage = 4;
+}

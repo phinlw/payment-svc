@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package generateRq;
+
+import "common.proto";
+
+service GenerateRqService {
+  rpc GenerateRqCreate(CreateGenerateRqRequest) returns (CreateGenerateRqResponse);
+  rpc GenerateRqUpdate(UpdateGenerateRqRequest) returns (UpdateGenerateRqResponse);
+  rpc GenerateRqDelete(DeleteGenerateRqRequest) returns (DeleteGenerateRqResponse);
+  rpc GenerateRqLoadAll(common.QueryString) returns (LoadAllGenerateRqResponse);
+  rpc GenerateRqLoadById(LoadGenerateRqByIdRequest) returns (LoadGenerateRqByIdResponse);
+  rpc GenerateQr(GenerateQrRequest) returns (GenerateQrResponse);
+}
+
+message CreateGenerateRqRequest {
+    string userId = 2;
+    string qrType = 3;
+    string platformType = 4;
+    string merchantId = 5;
+    string terminalId = 6;
+    string promotionCode = 7;
+    string expiryTime = 8;
+    string makeTxnTime = 9;
+    double amount = 10;
+    string currency = 11;
+    string ref1 = 12;
+    string ref2 = 13;
+    string ref3 = 14;
+    string mobileNum = 15;
+    DeeplinkMetaData deeplinkMetaData = 16;
+    string metadata = 17;
+}
+
+message CreateGenerateRqResponse {
+    string _id = 100;
+    int32 uniqueId = 101;
+    string userId = 1;
+    string expiryTime = 2;
+    string qrCode = 3;
+    string qrCodeUrl = 4;
+    double amount = 5;
+    string currency = 6;
+    string ref1 = 7;
+    string ref2 = 8;
+    string ref3 = 9;
+    string createdAt = 102;
+    string updatedAt = 103;
+}
+
+message DeleteGenerateRqRequest {
+    string _id = 100;
+}
+
+message DeleteGenerateRqResponse {
+    string _id = 100;
+}
+
+message UpdateGenerateRqRequest {
+    string _id = 100;
+    string name = 1;
+}
+
+message UpdateGenerateRqResponse {
+    string _id = 100;
+    int32 uniqueId = 101;
+    bool isActive = 102;
+    string createdAt = 103;
+    string updatedAt = 104;
+    string name = 1;
+}
+
+message LoadAllGenerateRqRequest {
+    string name = 1;
+}
+
+message LoadAllGenerateRqResponse {
+    repeated ResponseGenerateRqModel items = 1;
+    int32 total = 2;
+}
+
+message LoadGenerateRqByIdRequest {
+    string _id = 100;
+}
+
+message LoadGenerateRqByIdResponse {
+    string _id = 100;
+    int32 uniqueId = 101;
+    bool isActive = 102;
+    string createdAt = 103;
+    string updatedAt = 104;
+    string name = 1;
+}
+
+message ResponseGenerateRqModel {
+    string _id = 100;
+    int32 uniqueId = 101;
+    bool isActive = 102;
+    string createdAt = 103;
+    string updatedAt = 104;
+    string name = 1;
+}
+
+message DeeplinkMetaData {
+    string deeplink = 1;
+    string switchBackURL = 2;
+    string switchBackInfo = 3;
+}
+
+message GenerateQrRequest {
+    string qrType = 1;
+    string platformType = 2;
+    string merchantId = 3;
+    string terminalId = 4;
+    string promotionCode = 5;
+    string expiryTime = 6;
+    string makeTxnTime = 7;
+    double amount = 8;
+    string currency = 9;
+    string ref1 = 10;
+    string ref2 = 11;
+    string ref3 = 12;
+    string mobileNum = 13;
+    DeeplinkMetaData deeplinkMetaData = 14;
+    string metadata = 15;
+}
+
+message QrDataResponse {
+    string processingStatus = 1;
+    string responseDt = 2;
+    string qrCode = 3;
+    string expiredTime = 4;
+    string qrCodeUrl = 5;
+}
+
+message QrApiResponse {
+    string status = 1;
+    string message = 2;
+    QrDataResponse dataResponse = 3;
+}
+
+message GenerateQrResponse {
+    bool success = 1;
+    QrApiResponse apiResponse = 2;
+}

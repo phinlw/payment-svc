@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  payment-svc:
+    container_name: payment-svc
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: payment-svc-image:latest
+    restart: always
+    volumes:
+      - .:/usr/@app
+      - /usr/@app/node_modules
+    networks:
+      - share-container-network
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+      
+    deploy:
+      replicas: 1
+    ports:
+      - "7069:7069"
+networks:
+  share-container-network:
+    external: true
