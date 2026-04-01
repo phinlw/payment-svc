@@ -2,9 +2,9 @@ import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
 import { Metadata, status } from "@grpc/grpc-js";
 import { RpcException } from "@nestjs/microservices";
 import { ApiAccess } from "@/domain/models/base.model";
-import { BACKEND_KEY } from "./env.util";
+import { WALLET_BACKEND_KEY } from './env.util';
 
-const serviceWhitelist = [BACKEND_KEY];
+const serviceWhitelist = [WALLET_BACKEND_KEY];
 
 @Injectable()
 export class APIGrpcGuard implements CanActivate {

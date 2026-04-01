@@ -10,6 +10,7 @@ export const PROTO_WALLET_SVC_SYNC = process.env.PROTO_WALLET_SVC_SYNC;
 
 // Backend key
 export const BACKEND_KEY = process.env.BACKEND_KEY;
+export const WALLET_BACKEND_KEY = process.env.WALLET_BACKEND_KEY;
 
 // LDB QR Payment
 export const LDB_CLIENT_ID = process.env.LDB_CLIENT_ID;
