@@ -16,6 +16,7 @@ import {
 
 export class CreateGenerateQrAction extends GenerateQrModel {
   private qrApiResponse: any = null;
+  private providerName: string = '';
 
   constructor(private readonly session: QueryRunner) {
     super();
@@ -32,10 +33,16 @@ export class CreateGenerateQrAction extends GenerateQrModel {
       this.ref2 = qrBody.ref2;
       this.ref3 = qrBody.ref3;
       this.expiryTime = qrBody.expiryTime;
-      const model = await this.prepareGenerateQrModel(qrBody);
-      await this.persistGenerateQr(model);
 
       this.qrApiResponse = await this.callLdbGenerateQr(qrBody);
+
+      if (this.qrApiResponse?.status !== '00') {
+        const msg = this.qrApiResponse?.message || 'Unknown LDB error';
+        throw new Error(msg);
+      }
+
+      const model = await this.prepareGenerateQrModel(qrBody);
+      await this.persistGenerateQr(model);
 
       return this.buildResponse();
     } catch (error) {
@@ -53,13 +60,15 @@ export class CreateGenerateQrAction extends GenerateQrModel {
     params: CreateGenerateQrRequest,
   ): Promise<void> {
     try {
-      await this.validatePaymentProvider(
+      this.providerName = await this.validatePaymentProvider(
         params.paymentProviderId,
         params.amount,
       );
       this.paymentProviderId = params.paymentProviderId;
       this.userId = params.userId;
       this.amount = params.amount;
+      this.callbackUrl = params.callbackUrl;
+      this.callbackKey = params.callbackKey;
       this.isActive = true;
       this.createdAt = new Date();
       this.updatedAt = new Date();
@@ -77,7 +86,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
   private async validatePaymentProvider(
     paymentProviderId: string,
     amount: number,
-  ): Promise<void> {
+  ): Promise<string> {
     if (!paymentProviderId) {
       throw new Error('paymentProviderId is required');
     }
@@ -101,6 +110,8 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         `Amount '${amount}' is not allowed for payment provider '${paymentProviderId}'. Allowed amounts: ${allowedAmounts.join(', ') || 'none'}`,
       );
     }
+
+    return provider.name;
   }
 
   /**
@@ -130,6 +141,12 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         mobileNum: qrBody.mobileNum,
         deeplinkMetaData: qrBody.deeplinkMetaData,
         metadata: qrBody.metadata,
+        callbackUrl: qrBody.callbackUrl,
+        callbackKey: qrBody.callbackKey,
+        qrCode: this.qrApiResponse?.dataResponse?.qrCode || '',
+        qrCodeUrl: this.qrApiResponse?.dataResponse?.qrCode
+          ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(this.qrApiResponse.dataResponse.qrCode)}`
+          : '',
         status: 'PENDING',
         isActive: this.isActive || true,
         createdAt: this.createdAt || new Date(),
@@ -196,6 +213,8 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         switchBackInfo: null,
       },
       metadata: params.metadata || '',
+      callbackUrl: params.callbackUrl || '',
+      callbackKey: params.callbackKey || '',
     };
   }
 
@@ -243,7 +262,9 @@ export class CreateGenerateQrAction extends GenerateQrModel {
    */
   private buildResponse(): CreateGenerateQrResponse {
     try {
-      const dataResponse = this.qrApiResponse?.dataResponse;
+      const status = this.qrApiResponse?.status;
+      const dataResponse =
+        status === '00' ? this.qrApiResponse?.dataResponse : null;
       const qrCode = dataResponse?.qrCode || '';
       const qrCodeUrl = qrCode
         ? `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qrCode)}`
@@ -252,6 +273,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
       return {
         _id: this._id,
         uniqueId: this.uniqueId,
+        paymentProviderId: this.paymentProviderId,
         userId: this.userId,
         expiryTime: dataResponse?.expiredTime || '',
         qrCode,
@@ -261,6 +283,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         ref1: this.ref1,
         ref2: this.ref2,
         ref3: this.ref3,
+        providerName: this.providerName,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
       };

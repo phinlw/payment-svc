@@ -26,6 +26,11 @@ export class CreateGenerateQrValidation  extends CreateGenerateQrRequest {
       try {
         this.userId = params.userId;
         this.amount = params.amount;
+        this.callbackUrl = params.callbackUrl;
+        this.callbackKey = params.callbackKey;
+        this.ref1 = params.ref1;
+        this.ref2 = params.ref2;
+        this.ref3 = params.ref3;
 
       } catch (error) {
         console.log('ERROR InitParams', error?.message);
@@ -36,17 +41,47 @@ export class CreateGenerateQrValidation  extends CreateGenerateQrRequest {
   private async validateParams(): Promise<void> {
       try {
         const validationResults = validateMultiple({
-         userId: validateText(this.userId, {
-            required: true, 
-            minLength: 2, 
+          userId: validateText(this.userId, {
+            required: true,
+            minLength: 2,
             maxLength: 100,
-            allowEmpty: false 
+            allowEmpty: false,
+          }),
+          callbackUrl: validateText(this.callbackUrl, {
+            required: true,
+            minLength: 2,
+            maxLength: 255,
+            allowEmpty: false,
+          }),
+          callbackKey: validateText(this.callbackKey, {
+            required: true,
+            minLength: 2,
+            maxLength: 255,
+            allowEmpty: false,
+          }),
+          ref1: validateText(this.ref1, {
+            required: true,
+            minLength: 2,
+            maxLength: 255,
+            allowEmpty: false,
+          }),
+          ref2: validateText(this.ref2, {
+            required: true,
+            minLength: 2,
+            maxLength: 255,
+            allowEmpty: false,
+          }),
+          ref3: validateText(this.ref3, {
+            required: true,
+            minLength: 2,
+            maxLength: 255,
+            allowEmpty: false,
           }),
           amount: validateNumber(this.amount, {
             required: true,
             min: 1,
-            max: 100000000
-          })
+            max: 100000000,
+          }),
         });
 
         // Check if validation failed

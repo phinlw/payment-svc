@@ -142,6 +142,10 @@ export function validateText(text: string, options: ValidationOptions = {}): Val
     return { isValid: false, message: 'Text is required' };
   }
 
+  if (!text) {
+    return { isValid: true };
+  }
+
   if (!allowEmpty && text.trim().length === 0) {
     return { isValid: false, message: 'Text cannot be empty' };
   }

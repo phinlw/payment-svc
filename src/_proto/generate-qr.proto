@@ -31,11 +31,14 @@ message CreateGenerateQrRequest {
     string mobileNum = 15;
     DeeplinkMetaData deeplinkMetaData = 16;
     string metadata = 17;
+    string callbackUrl = 18;
+    string callbackKey = 19;
 }
 
 message CreateGenerateQrResponse {
     string _id = 100;
     int32 uniqueId = 101;
+    string paymentProviderId = 104;
     string userId = 1;
     string expiryTime = 2;
     string qrCode = 3;
@@ -45,6 +48,7 @@ message CreateGenerateQrResponse {
     string ref1 = 7;
     string ref2 = 8;
     string ref3 = 9;
+    string providerName = 10;
     string createdAt = 102;
     string updatedAt = 103;
 }

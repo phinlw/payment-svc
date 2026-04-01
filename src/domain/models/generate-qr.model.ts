@@ -24,6 +24,10 @@ export class GenerateQrModel extends DefaultModel {
   mobileNum?: string;
   deeplinkMetaData?: DeeplinkMetaData;
   metadata?: string;
+  qrCode?: string;
+  qrCodeUrl?: string;
+  callbackUrl?: string;
+  callbackKey?: string;
   status?: string;
 }
 
@@ -48,17 +52,20 @@ export class CreateGenerateQrRequest {
   makeTxnTime?: string;
   amount: number;
   currency?: string;
-  ref1?: string;
-  ref2?: string;
-  ref3?: string;
+  ref1: string;
+  ref2: string;
+  ref3: string;
   mobileNum?: string;
   deeplinkMetaData?: DeeplinkMetaData;
   metadata?: string;
+  callbackUrl: string;
+  callbackKey: string;
 }
 
 export class CreateGenerateQrResponse {
   _id?: string;
   uniqueId?: number;
+  paymentProviderId?: string;
   userId?: string;
   expiryTime?: string;
   qrCode?: string;
@@ -68,6 +75,7 @@ export class CreateGenerateQrResponse {
   ref1?: string;
   ref2?: string;
   ref3?: string;
+  providerName?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

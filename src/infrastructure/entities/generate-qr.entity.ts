@@ -67,6 +67,18 @@ export class GenerateQrEntity {
   @Column({ nullable: true })
   metadata: string;
 
+  @Column()
+  qrCode: string;
+
+  @Column({ nullable: true })
+  qrCodeUrl: string;
+
+  @Column({ nullable: true })
+  callbackUrl: string;
+
+  @Column()
+  callbackKey: string;
+
   @Column({ type: 'varchar', default: GenerateQrStatus.PENDING })
   status: string;
 
