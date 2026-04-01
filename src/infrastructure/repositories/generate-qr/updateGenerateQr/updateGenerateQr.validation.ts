@@ -1,13 +1,13 @@
 import { validateMultiple, validateText } from '@/shared/utils/base.util';
-import { UpdateGenerateRqRequest, UpdateGenerateRqResponse } from '@domain/models/generate-rq.model';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { UpdateGenerateQrRequest, UpdateGenerateQrResponse } from '@domain/models/generate-qr.model';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { Repository } from 'typeorm';
-export class UpdateGenerateRqValidation extends UpdateGenerateRqRequest {
-  constructor(private readonly generateRqRepository: Repository<GenerateRqEntity>) {
+export class UpdateGenerateQrValidation extends UpdateGenerateQrRequest {
+  constructor(private readonly generateQrRepository: Repository<GenerateQrEntity>) {
     super();
   }
 
-  public async execute(params: UpdateGenerateRqRequest): Promise<UpdateGenerateRqRequest> {
+  public async execute(params: UpdateGenerateQrRequest): Promise<UpdateGenerateQrRequest> {
       try {
         await this.buildParams(params);
         await this.validateParams();
@@ -21,7 +21,7 @@ export class UpdateGenerateRqValidation extends UpdateGenerateRqRequest {
         throw error instanceof Error ? error : new Error(String(error));
       }
     }
-  private async buildParams(params: UpdateGenerateRqRequest): Promise<string> {
+  private async buildParams(params: UpdateGenerateQrRequest): Promise<string> {
       try {
         this.name = params.name;
         this._id = params._id;

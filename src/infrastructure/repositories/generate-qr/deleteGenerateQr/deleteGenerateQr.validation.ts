@@ -1,13 +1,13 @@
-import { DeleteGenerateRqRequest } from '@domain/models/generate-rq.model';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { DeleteGenerateQrRequest } from '@domain/models/generate-qr.model';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { Repository } from 'typeorm';
-export class DeleteGenerateRqValidation  extends DeleteGenerateRqRequest { 
+export class DeleteGenerateQrValidation  extends DeleteGenerateQrRequest { 
 
-  constructor(private readonly generateRqRepository: Repository<GenerateRqEntity>) {
+  constructor(private readonly generateQrRepository: Repository<GenerateQrEntity>) {
     super();
   }
 
-  public async execute(params: DeleteGenerateRqRequest): Promise<DeleteGenerateRqRequest> {
+  public async execute(params: DeleteGenerateQrRequest): Promise<DeleteGenerateQrRequest> {
       try {
         await this.buildParams(params);
         await this.validateParams();
@@ -21,7 +21,7 @@ export class DeleteGenerateRqValidation  extends DeleteGenerateRqRequest {
       }
     }
 
-  private async buildParams(params: DeleteGenerateRqRequest): Promise<string> { 
+  private async buildParams(params: DeleteGenerateQrRequest): Promise<string> { 
     try {
         this._id = params._id;
         return 'InitParams completed';

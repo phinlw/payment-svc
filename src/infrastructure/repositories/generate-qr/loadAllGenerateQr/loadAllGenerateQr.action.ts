@@ -1,11 +1,11 @@
 import { createQueryProps, executeQuery } from '@/shared/utils/query';
 import { QueryProps } from '@domain/models/query.model';
-import { LoadAllGenerateRqResponse, ResponseGenerateRqModel } from '@domain/models/generate-rq.model';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { LoadAllGenerateQrResponse, ResponseGenerateQrModel } from '@domain/models/generate-qr.model';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { QueryRunner } from 'typeorm';
 
 
-export class LoadAllGenerateRqAction  extends LoadAllGenerateRqResponse {
+export class LoadAllGenerateQrAction  extends LoadAllGenerateQrResponse {
 
 
   constructor(private readonly session: QueryRunner) {
@@ -13,16 +13,16 @@ export class LoadAllGenerateRqAction  extends LoadAllGenerateRqResponse {
   }
 
 
-  public async execute(query: QueryProps): Promise<LoadAllGenerateRqResponse> {
+  public async execute(query: QueryProps): Promise<LoadAllGenerateQrResponse> {
       try {
         const queryProps = await this.buildQueryParams(query);
-        const { data, total } = await this.fetchGenerateRqData(queryProps);
+        const { data, total } = await this.fetchGenerateQrData(queryProps);
         const transformedData = await this.transformEntities(data);
 
 
         return this.buildResponse(transformedData, total);
       } catch (error) {
-        console.error('ERROR LoadAllGenerateRqAction.execute', error?.message);
+        console.error('ERROR LoadAllGenerateQrAction.execute', error?.message);
         throw error instanceof Error ? error : new Error(error?.message);
       }
     }
@@ -45,14 +45,14 @@ export class LoadAllGenerateRqAction  extends LoadAllGenerateRqResponse {
   /**
    * Fetch data from database
    */
-  private async fetchGenerateRqData(queryProps: any): Promise<{ data: GenerateRqEntity[], total: number }> {
+  private async fetchGenerateQrData(queryProps: any): Promise<{ data: GenerateQrEntity[], total: number }> {
       try {
-        const repository = this.session.manager.getRepository(GenerateRqEntity);
+        const repository = this.session.manager.getRepository(GenerateQrEntity);
         const { data, total } = await executeQuery(repository, queryProps);
         
         return { data, total };
       } catch (error) {
-        console.error('ERROR fetchGenerateRqData', error?.message);
+        console.error('ERROR fetchGenerateQrData', error?.message);
         throw new Error(`Failed to fetch data: ${error?.message}`);
       }
     }
@@ -62,7 +62,7 @@ export class LoadAllGenerateRqAction  extends LoadAllGenerateRqResponse {
    * Transform entities to response models
    * Optimized for large datasets with batch processing
    */
-  private async transformEntities(entities: GenerateRqEntity[]): Promise<ResponseGenerateRqModel[]> {
+  private async transformEntities(entities: GenerateQrEntity[]): Promise<ResponseGenerateQrModel[]> {
       try {
         if (!entities || entities.length === 0) {
           return [];
@@ -71,7 +71,7 @@ export class LoadAllGenerateRqAction  extends LoadAllGenerateRqResponse {
 
         // For large datasets, process in chunks to avoid memory issues
         const CHUNK_SIZE = 100;
-        const result: ResponseGenerateRqModel[] = [];
+        const result: ResponseGenerateQrModel[] = [];
 
 
         for (let i = 0; i < entities.length; i += CHUNK_SIZE) {
@@ -92,7 +92,7 @@ export class LoadAllGenerateRqAction  extends LoadAllGenerateRqResponse {
   /**
    * Helper: Map single entity to response model
    */
-  private mapEntityToModel(entity: GenerateRqEntity): ResponseGenerateRqModel {
+  private mapEntityToModel(entity: GenerateQrEntity): ResponseGenerateQrModel {
       return {
         _id: entity._id,
         uniqueId: entity.uniqueId,
@@ -108,7 +108,7 @@ export class LoadAllGenerateRqAction  extends LoadAllGenerateRqResponse {
   /**
    * Build final response
    */
-  private buildResponse(items: ResponseGenerateRqModel[], total: number): LoadAllGenerateRqResponse {
+  private buildResponse(items: ResponseGenerateQrModel[], total: number): LoadAllGenerateQrResponse {
       try {
         this.items = items;
         this.total = total;

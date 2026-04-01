@@ -1,18 +1,18 @@
-import { CreateGenerateRqRequest, CreateGenerateRqResponse } from '@domain/models/generate-rq.model';
+import { CreateGenerateQrRequest, CreateGenerateQrResponse } from '@domain/models/generate-qr.model';
 import { 
   validateText,
   validateNumber,
   validateMultiple
 } from '@shared/utils/base.util';
 import { Repository } from 'typeorm';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 
-export class CreateGenerateRqValidation  extends CreateGenerateRqRequest {
-  constructor(private readonly generateRqRepository: Repository<GenerateRqEntity>) {
+export class CreateGenerateQrValidation  extends CreateGenerateQrRequest {
+  constructor(private readonly generateQrRepository: Repository<GenerateQrEntity>) {
     super();
   }
 
-  public async execute(params: CreateGenerateRqRequest): Promise<void> {
+  public async execute(params: CreateGenerateQrRequest): Promise<void> {
     try {
 
         await this.buildParams(params);
@@ -22,7 +22,7 @@ export class CreateGenerateRqValidation  extends CreateGenerateRqRequest {
       }
     }
 
-  private async buildParams(params: CreateGenerateRqRequest): Promise<void> {
+  private async buildParams(params: CreateGenerateQrRequest): Promise<void> {
       try {
         this.userId = params.userId;
         this.amount = params.amount;

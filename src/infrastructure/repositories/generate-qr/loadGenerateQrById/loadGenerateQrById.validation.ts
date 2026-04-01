@@ -1,11 +1,11 @@
-import { LoadGenerateRqByIdRequest } from '@domain/models/generate-rq.model';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { LoadGenerateQrByIdRequest } from '@domain/models/generate-qr.model';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { Repository } from 'typeorm';
-export class LoadGenerateRqByIdValidation  extends LoadGenerateRqByIdRequest {
-  constructor(private readonly generateRqRepository: Repository<GenerateRqEntity>) {
+export class LoadGenerateQrByIdValidation  extends LoadGenerateQrByIdRequest {
+  constructor(private readonly generateQrRepository: Repository<GenerateQrEntity>) {
     super();
   }
-  public async execute(params: LoadGenerateRqByIdRequest): Promise<any> {
+  public async execute(params: LoadGenerateQrByIdRequest): Promise<any> {
       try {
         await this.buildParams(params);
         await this.validateParams();
@@ -18,7 +18,7 @@ export class LoadGenerateRqByIdValidation  extends LoadGenerateRqByIdRequest {
         throw error instanceof Error ? error : new Error(String(error));
       }
     }
-  private async buildParams(params: LoadGenerateRqByIdRequest): Promise<string> {
+  private async buildParams(params: LoadGenerateQrByIdRequest): Promise<string> {
     try {
         this._id = params._id;
         return 'BuildParams completed';

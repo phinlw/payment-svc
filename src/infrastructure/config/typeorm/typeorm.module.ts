@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EnvironmentConfigModule } from '../environment-config/environment-config.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 
 export const getTypeOrmModuleOptions = (
   config: EnvironmentConfigService,
@@ -15,7 +15,7 @@ export const getTypeOrmModuleOptions = (
   username: config.getDBUser(),
   password: config.getDBPass(),
   database: config.getDBName(),
-  entities: [GenerateRqEntity],
+  entities: [GenerateQrEntity],
   synchronize: true,
 });
 

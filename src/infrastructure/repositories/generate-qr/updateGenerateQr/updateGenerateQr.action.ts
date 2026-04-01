@@ -1,14 +1,14 @@
-import { UpdateGenerateRqRequest, UpdateGenerateRqResponse } from '@domain/models/generate-rq.model';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { UpdateGenerateQrRequest, UpdateGenerateQrResponse } from '@domain/models/generate-qr.model';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { QueryRunner } from 'typeorm';
 
 
-export class UpdateGenerateRqAction  extends UpdateGenerateRqResponse {
+export class UpdateGenerateQrAction  extends UpdateGenerateQrResponse {
   constructor(private readonly session: QueryRunner) {
     super();
   }
     
-    public async execute(params: UpdateGenerateRqRequest): Promise<UpdateGenerateRqResponse|null> {
+    public async execute(params: UpdateGenerateQrRequest): Promise<UpdateGenerateQrResponse|null> {
       try {
         await this.validateAndBuildParams(params);
         const updateModel = await this.prepareUpdateModel();
@@ -17,7 +17,7 @@ export class UpdateGenerateRqAction  extends UpdateGenerateRqResponse {
 
         return this.buildResponse();
       } catch (error) {
-        console.error('ERROR UpdateGenerateRqAction.execute', error?.message);
+        console.error('ERROR UpdateGenerateQrAction.execute', error?.message);
         throw error instanceof Error ? error : new Error(error?.message);
       }
     }
@@ -26,7 +26,7 @@ export class UpdateGenerateRqAction  extends UpdateGenerateRqResponse {
   /**
    * Validate and build parameters
    */
-  private async validateAndBuildParams(params: UpdateGenerateRqRequest): Promise<void> {
+  private async validateAndBuildParams(params: UpdateGenerateQrRequest): Promise<void> {
       try {
         this._id = params._id;
       } catch (error) {
@@ -54,28 +54,28 @@ export class UpdateGenerateRqAction  extends UpdateGenerateRqResponse {
   /**
    * Perform database update and fetch updated entity
    */
-  private async performUpdate(model: any): Promise<GenerateRqEntity> {
+  private async performUpdate(model: any): Promise<GenerateQrEntity> {
       try {
         const condition = { _id: this._id };
 
-        const result = await this.session.manager.update(GenerateRqEntity, condition, model);
+        const result = await this.session.manager.update(GenerateQrEntity, condition, model);
         
         if (result.affected === 0) {
-          throw new Error("GenerateRq not found or no changes made");
+          throw new Error("GenerateQr not found or no changes made");
         }
         
-        const updatedEntity = await this.session.manager.findOne(GenerateRqEntity, {
+        const updatedEntity = await this.session.manager.findOne(GenerateQrEntity, {
           where: condition
         });
         
         if (!updatedEntity) {
-          throw new Error("GenerateRq not found after update");
+          throw new Error("GenerateQr not found after update");
         }
 
         return updatedEntity;
       } catch (error) {
         console.error('ERROR performUpdate', error?.message);
-        throw new Error(`Failed to update generate-rq: ${error?.message}`);
+        throw new Error(`Failed to update generate-qr: ${error?.message}`);
       }
     }
 
@@ -83,7 +83,7 @@ export class UpdateGenerateRqAction  extends UpdateGenerateRqResponse {
   /**
    * Map entity to response properties
    */
-  private async mapEntityToResponse(entity: GenerateRqEntity): Promise<void> {
+  private async mapEntityToResponse(entity: GenerateQrEntity): Promise<void> {
       try {
         this._id = entity._id;
         this.uniqueId = entity.uniqueId;
@@ -100,7 +100,7 @@ export class UpdateGenerateRqAction  extends UpdateGenerateRqResponse {
   /**
    * Build final response
    */
-  private buildResponse(): UpdateGenerateRqResponse {
+  private buildResponse(): UpdateGenerateQrResponse {
       try {
         return {
           _id: this._id,

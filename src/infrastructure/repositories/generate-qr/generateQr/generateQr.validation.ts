@@ -1,9 +1,9 @@
-import { GenerateQrRequest } from '@domain/models/generate-rq.model';
+import { GenerateQrRequest } from '@domain/models/generate-qr.model';
 import { Repository } from 'typeorm';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 
 export class GenerateQrValidation {
-  constructor(private readonly generateRqRepository: Repository<GenerateRqEntity>) {}
+  constructor(private readonly generateQrRepository: Repository<GenerateQrEntity>) {}
 
   public async execute(params: GenerateQrRequest): Promise<GenerateQrRequest> {
     try {

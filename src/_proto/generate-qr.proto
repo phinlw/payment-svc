@@ -1,19 +1,19 @@
 syntax = "proto3";
 
-package generateRq;
+package generateQr;
 
 import "common.proto";
 
-service GenerateRqService {
-  rpc GenerateRqCreate(CreateGenerateRqRequest) returns (CreateGenerateRqResponse);
-  rpc GenerateRqUpdate(UpdateGenerateRqRequest) returns (UpdateGenerateRqResponse);
-  rpc GenerateRqDelete(DeleteGenerateRqRequest) returns (DeleteGenerateRqResponse);
-  rpc GenerateRqLoadAll(common.QueryString) returns (LoadAllGenerateRqResponse);
-  rpc GenerateRqLoadById(LoadGenerateRqByIdRequest) returns (LoadGenerateRqByIdResponse);
+service GenerateQrService {
+  rpc GenerateQrCreate(CreateGenerateQrRequest) returns (CreateGenerateQrResponse);
+  rpc GenerateQrUpdate(UpdateGenerateQrRequest) returns (UpdateGenerateQrResponse);
+  rpc GenerateQrDelete(DeleteGenerateQrRequest) returns (DeleteGenerateQrResponse);
+  rpc GenerateQrLoadAll(common.QueryString) returns (LoadAllGenerateQrResponse);
+  rpc GenerateQrLoadById(LoadGenerateQrByIdRequest) returns (LoadGenerateQrByIdResponse);
   rpc GenerateQr(GenerateQrRequest) returns (GenerateQrResponse);
 }
 
-message CreateGenerateRqRequest {
+message CreateGenerateQrRequest {
     string userId = 2;
     string qrType = 3;
     string platformType = 4;
@@ -32,7 +32,7 @@ message CreateGenerateRqRequest {
     string metadata = 17;
 }
 
-message CreateGenerateRqResponse {
+message CreateGenerateQrResponse {
     string _id = 100;
     int32 uniqueId = 101;
     string userId = 1;
@@ -48,20 +48,20 @@ message CreateGenerateRqResponse {
     string updatedAt = 103;
 }
 
-message DeleteGenerateRqRequest {
+message DeleteGenerateQrRequest {
     string _id = 100;
 }
 
-message DeleteGenerateRqResponse {
+message DeleteGenerateQrResponse {
     string _id = 100;
 }
 
-message UpdateGenerateRqRequest {
+message UpdateGenerateQrRequest {
     string _id = 100;
     string name = 1;
 }
 
-message UpdateGenerateRqResponse {
+message UpdateGenerateQrResponse {
     string _id = 100;
     int32 uniqueId = 101;
     bool isActive = 102;
@@ -70,20 +70,20 @@ message UpdateGenerateRqResponse {
     string name = 1;
 }
 
-message LoadAllGenerateRqRequest {
+message LoadAllGenerateQrRequest {
     string name = 1;
 }
 
-message LoadAllGenerateRqResponse {
-    repeated ResponseGenerateRqModel items = 1;
+message LoadAllGenerateQrResponse {
+    repeated ResponseGenerateQrModel items = 1;
     int32 total = 2;
 }
 
-message LoadGenerateRqByIdRequest {
+message LoadGenerateQrByIdRequest {
     string _id = 100;
 }
 
-message LoadGenerateRqByIdResponse {
+message LoadGenerateQrByIdResponse {
     string _id = 100;
     int32 uniqueId = 101;
     bool isActive = 102;
@@ -92,7 +92,7 @@ message LoadGenerateRqByIdResponse {
     string name = 1;
 }
 
-message ResponseGenerateRqModel {
+message ResponseGenerateQrModel {
     string _id = 100;
     int32 uniqueId = 101;
     bool isActive = 102;

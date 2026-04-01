@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 
 import { Module } from '@nestjs/common';
-import { GenerateRqRepoImpl } from './generate-rq/generate-rq.repository';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { GenerateQrRepoImpl } from './generate-qr/generate-qr.repository';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { TypeOrmConfigModule } from '../config/typeorm/typeorm.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -10,9 +10,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   imports: [
     TypeOrmConfigModule,
-    TypeOrmModule.forFeature([GenerateRqEntity, ]),
+    TypeOrmModule.forFeature([GenerateQrEntity, ]),
   ],
-  providers: [GenerateRqRepoImpl],
-  exports: [GenerateRqRepoImpl],
+  providers: [GenerateQrRepoImpl],
+  exports: [GenerateQrRepoImpl],
 })
 export class RepositoriesModule {}

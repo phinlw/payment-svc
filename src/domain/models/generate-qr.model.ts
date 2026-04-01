@@ -1,12 +1,12 @@
 import { DefaultModel } from "./base.model";
 
-export enum GenerateRqStatus {
+export enum GenerateQrStatus {
   PENDING = 'PENDING',
   COMPLETE = 'COMPLETE',
   CANCEL = 'CANCEL',
 }
 
-export class GenerateRqModel extends DefaultModel {
+export class GenerateQrModel extends DefaultModel {
   userId: string;
   qrType?: string;
   platformType?: string;
@@ -27,7 +27,7 @@ export class GenerateRqModel extends DefaultModel {
 }
 
 
-export class ResponseGenerateRqModel extends GenerateRqModel {}
+export class ResponseGenerateQrModel extends GenerateQrModel {}
 
 export class DeeplinkMetaData {
   deeplink?: string;
@@ -35,7 +35,7 @@ export class DeeplinkMetaData {
   switchBackInfo?: string;
 }
 
-export class CreateGenerateRqRequest {
+export class CreateGenerateQrRequest {
   userId: string;
   qrType?: string;
   platformType?: string;
@@ -54,7 +54,7 @@ export class CreateGenerateRqRequest {
   metadata?: string;
 }
 
-export class CreateGenerateRqResponse {
+export class CreateGenerateQrResponse {
   _id?: string;
   uniqueId?: number;
   userId?: string;
@@ -70,35 +70,35 @@ export class CreateGenerateRqResponse {
   updatedAt?: Date;
 }
 
-export class DeleteGenerateRqRequest {
+export class DeleteGenerateQrRequest {
   _id: string;
 }
 
-export class DeleteGenerateRqResponse {
+export class DeleteGenerateQrResponse {
   _id: string;
 }
 
-export class UpdateGenerateRqRequest {
+export class UpdateGenerateQrRequest {
   _id: string;
   name: string;
 }
 
-export class UpdateGenerateRqResponse extends ResponseGenerateRqModel {}
+export class UpdateGenerateQrResponse extends ResponseGenerateQrModel {}
 
-export class LoadAllGenerateRqRequest {
+export class LoadAllGenerateQrRequest {
   name: string;
 }
 
-export class LoadAllGenerateRqResponse {
-  items: ResponseGenerateRqModel[];
+export class LoadAllGenerateQrResponse {
+  items: ResponseGenerateQrModel[];
   total: number;
 }
 
-export class LoadGenerateRqByIdRequest {
+export class LoadGenerateQrByIdRequest {
   _id: string;
 }
 
-export class LoadGenerateRqByIdResponse extends ResponseGenerateRqModel {}
+export class LoadGenerateQrByIdResponse extends ResponseGenerateQrModel {}
 
 export class GenerateQrRequest {
   [key: string]: any;

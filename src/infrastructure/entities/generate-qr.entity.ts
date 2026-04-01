@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-export enum GenerateRqStatus {
+export enum GenerateQrStatus {
   PENDING = 'PENDING',
   COMPLETE = 'COMPLETE',
   CANCEL = 'CANCEL',
@@ -9,7 +9,7 @@ export enum GenerateRqStatus {
 @Entity({
   name: 'generate_rq',
 })
-export class GenerateRqEntity {
+export class GenerateQrEntity {
   @Column("varchar", { length: 50, nullable: true })
   _id: string;
 
@@ -64,7 +64,7 @@ export class GenerateRqEntity {
   @Column({ nullable: true })
   metadata: string;
 
-  @Column({ type: 'varchar', default: GenerateRqStatus.PENDING })
+  @Column({ type: 'varchar', default: GenerateQrStatus.PENDING })
   status: string;
 
   @Column({ default: true })

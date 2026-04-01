@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GenerateQrRequest, GenerateQrResponse } from '@domain/models/generate-rq.model';
+import { GenerateQrRequest, GenerateQrResponse } from '@domain/models/generate-qr.model';
 import { generateLdbHeaders, getLdbApiUrl, fetchAccessToken } from '@shared/utils/ldb-header.util';
 
 export class GenerateQrAction {

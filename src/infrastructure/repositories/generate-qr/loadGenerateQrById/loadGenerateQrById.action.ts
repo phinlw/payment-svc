@@ -1,24 +1,24 @@
-import { LoadGenerateRqByIdRequest, LoadGenerateRqByIdResponse } from '@domain/models/generate-rq.model';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { LoadGenerateQrByIdRequest, LoadGenerateQrByIdResponse } from '@domain/models/generate-qr.model';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { QueryRunner } from 'typeorm';
 
 
-export class LoadGenerateRqByIdAction  extends LoadGenerateRqByIdResponse {
+export class LoadGenerateQrByIdAction  extends LoadGenerateQrByIdResponse {
   constructor(private readonly session: QueryRunner) {
     super();
   }
 
 
-  public async execute(params: LoadGenerateRqByIdRequest): Promise<LoadGenerateRqByIdResponse|null> {
+  public async execute(params: LoadGenerateQrByIdRequest): Promise<LoadGenerateQrByIdResponse|null> {
     try {
         await this.validateParams(params);
-        const entity = await this.fetchGenerateRqById();
+        const entity = await this.fetchGenerateQrById();
         await this.mapEntityToResponse(entity);
 
 
         return this.buildResponse();
       } catch (error) {
-        console.error('ERROR LoadGenerateRqByIdAction.execute', error?.message);
+        console.error('ERROR LoadGenerateQrByIdAction.execute', error?.message);
         throw error instanceof Error ? error : new Error(error?.message);
       }
     }
@@ -27,10 +27,10 @@ export class LoadGenerateRqByIdAction  extends LoadGenerateRqByIdResponse {
   /**
    * Validate parameters
    */
-  private async validateParams(params: LoadGenerateRqByIdRequest): Promise<void> { 
+  private async validateParams(params: LoadGenerateQrByIdRequest): Promise<void> { 
       try {
         if (!params._id) {
-          throw new Error('GenerateRq ID is required');
+          throw new Error('GenerateQr ID is required');
         }
         this._id = params._id;
       } catch (error) {
@@ -41,9 +41,9 @@ export class LoadGenerateRqByIdAction  extends LoadGenerateRqByIdResponse {
 
 
   /**
-   * Fetch generate-rq entity from database
+   * Fetch generate-qr entity from database
    */
-  private async fetchGenerateRqById(): Promise<GenerateRqEntity> {
+  private async fetchGenerateQrById(): Promise<GenerateQrEntity> {
       try {
         const condition = {
           where: {
@@ -52,19 +52,19 @@ export class LoadGenerateRqByIdAction  extends LoadGenerateRqByIdResponse {
         };
 
 
-        const entity = await this.session.manager.findOne(GenerateRqEntity, condition);
+        const entity = await this.session.manager.findOne(GenerateQrEntity, condition);
 
 
         if (!entity) {
-          throw new Error('GenerateRq not found');
+          throw new Error('GenerateQr not found');
         }
 
 
         return entity;
       }
       catch (error) {
-        console.error('ERROR fetchGenerateRqById', error?.message);
-        throw new Error(`Failed to fetch generate-rq: ${error?.message}`);
+        console.error('ERROR fetchGenerateQrById', error?.message);
+        throw new Error(`Failed to fetch generate-qr: ${error?.message}`);
       }
     }
 
@@ -72,7 +72,7 @@ export class LoadGenerateRqByIdAction  extends LoadGenerateRqByIdResponse {
   /**
    * Map entity to response properties
    */
-  private async mapEntityToResponse(entity: GenerateRqEntity): Promise<void> {
+  private async mapEntityToResponse(entity: GenerateQrEntity): Promise<void> {
       try {
         this._id = entity._id;
         this.uniqueId = entity.uniqueId;
@@ -91,7 +91,7 @@ export class LoadGenerateRqByIdAction  extends LoadGenerateRqByIdResponse {
   /**
    * Build final response
    */
-  private buildResponse(): LoadGenerateRqByIdResponse {
+  private buildResponse(): LoadGenerateQrByIdResponse {
       try {
         return {
           _id: this._id,

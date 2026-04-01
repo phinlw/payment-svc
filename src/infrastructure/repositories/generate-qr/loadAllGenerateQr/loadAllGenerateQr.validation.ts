@@ -1,12 +1,12 @@
-import { LoadAllGenerateRqRequest } from '@domain/models/generate-rq.model';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { LoadAllGenerateQrRequest } from '@domain/models/generate-qr.model';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { Repository } from 'typeorm';
-export class LoadAllGenerateRqValidation  extends LoadAllGenerateRqRequest {
-  constructor(private readonly generateRqRepository: Repository<GenerateRqEntity>) {
+export class LoadAllGenerateQrValidation  extends LoadAllGenerateQrRequest {
+  constructor(private readonly generateQrRepository: Repository<GenerateQrEntity>) {
     super();
   }
 
-  public async execute(params: LoadAllGenerateRqRequest): Promise<any> {
+  public async execute(params: LoadAllGenerateQrRequest): Promise<any> {
       try {
         await this.InitParams(params);
         await this.ValidateParams();
@@ -18,7 +18,7 @@ export class LoadAllGenerateRqValidation  extends LoadAllGenerateRqRequest {
       }
     }
 
-  private async InitParams(params: LoadAllGenerateRqRequest): Promise<string> {
+  private async InitParams(params: LoadAllGenerateQrRequest): Promise<string> {
       try {
         this.name = params.name;
         return 'InitParams completed';

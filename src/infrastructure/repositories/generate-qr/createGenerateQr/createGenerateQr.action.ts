@@ -1,18 +1,18 @@
 import { _ID } from '@shared/utils/base.util';
-import { GenerateRqModel, CreateGenerateRqResponse, CreateGenerateRqRequest } from '@domain/models/generate-rq.model';
-import { GenerateRqEntity } from '@infrastructure/entities/generate-rq.entity';
+import { GenerateQrModel, CreateGenerateQrResponse, CreateGenerateQrRequest } from '@domain/models/generate-qr.model';
+import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { QueryRunner } from 'typeorm';
 import axios from 'axios';
 import { generateLdbHeaders, getLdbApiUrl, fetchAccessToken } from '@shared/utils/ldb-header.util';
 
-export class CreateGenerateRqAction  extends GenerateRqModel {
+export class CreateGenerateQrAction  extends GenerateQrModel {
   private qrApiResponse: any = null;
 
   constructor(private readonly session: QueryRunner) {
     super();
   }
 
-  public async execute(params: CreateGenerateRqRequest): Promise<CreateGenerateRqResponse> {
+  public async execute(params: CreateGenerateQrRequest): Promise<CreateGenerateQrResponse> {
     try {
       await this.validateAndBuildParams(params);
       const qrBody = this.buildQrRequestBody(params);
@@ -21,14 +21,14 @@ export class CreateGenerateRqAction  extends GenerateRqModel {
       this.ref2 = qrBody.ref2;
       this.ref3 = qrBody.ref3;
       this.expiryTime = qrBody.expiryTime;
-      const model = await this.prepareGenerateRqModel(qrBody);
-      await this.persistGenerateRq(model);
+      const model = await this.prepareGenerateQrModel(qrBody);
+      await this.persistGenerateQr(model);
 
       this.qrApiResponse = await this.callLdbGenerateQr(qrBody);
 
       return this.buildResponse();
     } catch (error) {
-      console.error('ERROR CreateGenerateRqAction.execute', error?.message);
+      console.error('ERROR CreateGenerateQrAction.execute', error?.message);
       throw error instanceof Error ? error : new Error(error?.message || String(error));
     }
   }
@@ -36,7 +36,7 @@ export class CreateGenerateRqAction  extends GenerateRqModel {
   /**
    * Validate and build parameters
    */
-  private async validateAndBuildParams(params: CreateGenerateRqRequest): Promise<void> {
+  private async validateAndBuildParams(params: CreateGenerateQrRequest): Promise<void> {
     try {
       this.userId = params.userId;
       this.amount = params.amount;
@@ -52,9 +52,9 @@ export class CreateGenerateRqAction  extends GenerateRqModel {
   /**
    * Prepare model for insertion
    */
-  private async prepareGenerateRqModel(qrBody: Record<string, any>): Promise<GenerateRqModel> {
+  private async prepareGenerateQrModel(qrBody: Record<string, any>): Promise<GenerateQrModel> {
     try {
-      const model: GenerateRqModel = {
+      const model: GenerateQrModel = {
         _id: _ID(),
         uniqueId: 0,
         userId: this.userId,
@@ -81,7 +81,7 @@ export class CreateGenerateRqAction  extends GenerateRqModel {
 
       return model;
     } catch (error) {
-      console.error('ERROR prepareGenerateRqModel', error?.message);
+      console.error('ERROR prepareGenerateQrModel', error?.message);
       throw new Error(`Failed to prepare model: ${error?.message || String(error)}`);
     }
   }
@@ -89,9 +89,9 @@ export class CreateGenerateRqAction  extends GenerateRqModel {
   /**
    * Persist entity to database
    */
-  private async persistGenerateRq(model: GenerateRqModel): Promise<void> {
+  private async persistGenerateQr(model: GenerateQrModel): Promise<void> {
     try {
-      const savedEntity = await this.session.manager.save(GenerateRqEntity, model);
+      const savedEntity = await this.session.manager.save(GenerateQrEntity, model);
 
       if (savedEntity) {
         this._id = savedEntity._id;
@@ -100,7 +100,7 @@ export class CreateGenerateRqAction  extends GenerateRqModel {
         throw new Error('Failed to save entity into database');
       }
     } catch (error) {
-      console.error('ERROR persistGenerateRq', error?.message);
+      console.error('ERROR persistGenerateQr', error?.message);
       throw new Error(`Failed to persist entity: ${error?.message || String(error)}`);
     }
   }
@@ -108,7 +108,7 @@ export class CreateGenerateRqAction  extends GenerateRqModel {
   /**
    * Build QR request body from params
    */
-  private buildQrRequestBody(params: CreateGenerateRqRequest): Record<string, any> {
+  private buildQrRequestBody(params: CreateGenerateQrRequest): Record<string, any> {
     // console.log('buildQrRequestBody', params);
     return {
       qrType: params.qrType || '38',
@@ -174,7 +174,7 @@ export class CreateGenerateRqAction  extends GenerateRqModel {
   /**
    * Build response object
    */
-  private buildResponse(): CreateGenerateRqResponse {
+  private buildResponse(): CreateGenerateQrResponse {
     try {
       const dataResponse = this.qrApiResponse?.dataResponse;
       const qrCode = dataResponse?.qrCode || '';
