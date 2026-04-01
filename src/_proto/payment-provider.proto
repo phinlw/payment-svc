@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package paymentProvider;
+
+import "common.proto";
+
+service PaymentProviderService {
+  rpc PaymentProviderCreate(CreatePaymentProviderRequest) returns (CreatePaymentProviderResponse);
+  rpc PaymentProviderUpdate(UpdatePaymentProviderRequest) returns (UpdatePaymentProviderResponse);
+  rpc PaymentProviderDelete(DeletePaymentProviderRequest) returns (DeletePaymentProviderResponse);
+  rpc PaymentProviderLoadAll(common.QueryString) returns (LoadAllPaymentProviderResponse);
+  rpc PaymentProviderLoadById(LoadPaymentProviderByIdRequest) returns (LoadPaymentProviderByIdResponse);
+}
+
+message CreatePaymentProviderRequest {
+    string name = 1;
+    string img = 2;
+    repeated double amount = 3;
+}
+
+message CreatePaymentProviderResponse {
+    string _id = 100;
+    int32 uniqueId = 101;
+    bool isActive = 102;
+    string createdAt = 103;
+    string updatedAt = 104;
+    string name = 1;
+    string img = 2;
+    repeated double amount = 3;
+}
+
+message DeletePaymentProviderRequest {
+    string _id = 100;
+}
+
+message DeletePaymentProviderResponse {
+    string _id = 100;
+}
+
+message UpdatePaymentProviderRequest {
+    string _id = 100;
+    string name = 1;
+    string img = 2;
+    repeated double amount = 3;
+}
+
+message UpdatePaymentProviderResponse {
+    string _id = 100;
+    int32 uniqueId = 101;
+    bool isActive = 102;
+    string createdAt = 103;
+    string updatedAt = 104;
+    string name = 1;
+    string img = 2;
+    repeated double amount = 3;
+}
+
+message LoadAllPaymentProviderRequest {
+    string name = 1;
+}
+
+message LoadAllPaymentProviderResponse {
+    repeated ResponsePaymentProviderModel items = 1;
+    int32 total = 2;
+}
+
+message LoadPaymentProviderByIdRequest {
+    string _id = 100;
+}
+
+message LoadPaymentProviderByIdResponse {
+    string _id = 100;
+    int32 uniqueId = 101;
+    bool isActive = 102;
+    string createdAt = 103;
+    string updatedAt = 104;
+    string name = 1;
+    string img = 2;
+    repeated double amount = 3;
+}
+
+message ResponsePaymentProviderModel {
+    string _id = 100;
+    int32 uniqueId = 101;
+    bool isActive = 102;
+    string createdAt = 103;
+    string updatedAt = 104;
+    string name = 1;
+    string img = 2;
+    repeated double amount = 3;
+}

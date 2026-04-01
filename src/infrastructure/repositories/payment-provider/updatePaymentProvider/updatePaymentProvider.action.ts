@@ -1,14 +1,14 @@
-import { UpdateGenerateQrRequest, UpdateGenerateQrResponse } from '@domain/models/generate-qr.model';
-import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
+import { UpdatePaymentProviderRequest, UpdatePaymentProviderResponse } from '@domain/models/payment-provider.model';
+import { PaymentProviderEntity } from '@infrastructure/entities/payment-provider.entity';
 import { QueryRunner } from 'typeorm';
 
 
-export class UpdateGenerateQrAction  extends UpdateGenerateQrResponse {
+export class UpdatePaymentProviderAction  extends UpdatePaymentProviderResponse {
   constructor(private readonly session: QueryRunner) {
     super();
   }
     
-    public async execute(params: UpdateGenerateQrRequest): Promise<UpdateGenerateQrResponse|null> {
+    public async execute(params: UpdatePaymentProviderRequest): Promise<UpdatePaymentProviderResponse|null> {
       try {
         await this.validateAndBuildParams(params);
         const updateModel = await this.prepareUpdateModel();
@@ -17,7 +17,7 @@ export class UpdateGenerateQrAction  extends UpdateGenerateQrResponse {
 
         return this.buildResponse();
       } catch (error) {
-        console.error('ERROR UpdateGenerateQrAction.execute', error?.message);
+        console.error('ERROR UpdatePaymentProviderAction.execute', error?.message);
         throw error instanceof Error ? error : new Error(error?.message);
       }
     }
@@ -26,9 +26,12 @@ export class UpdateGenerateQrAction  extends UpdateGenerateQrResponse {
   /**
    * Validate and build parameters
    */
-  private async validateAndBuildParams(params: UpdateGenerateQrRequest): Promise<void> {
+  private async validateAndBuildParams(params: UpdatePaymentProviderRequest): Promise<void> {
       try {
         this._id = params._id;
+        if (params.name !== undefined) this.name = params.name;
+        if (params.img !== undefined) this.img = params.img;
+        if (params.amount !== undefined) this.amount = params.amount;
       } catch (error) {
         console.error('ERROR validateAndBuildParams', error?.message);
         throw new Error(`Failed to validate parameters: ${error?.message}`);
@@ -43,6 +46,9 @@ export class UpdateGenerateQrAction  extends UpdateGenerateQrResponse {
       try {
         return {
           _id: this._id,
+          name: this.name,
+          img: this.img,
+          amount: this.amount,
         };
       } catch (error) {
         console.error('ERROR prepareUpdateModel', error?.message);
@@ -54,28 +60,28 @@ export class UpdateGenerateQrAction  extends UpdateGenerateQrResponse {
   /**
    * Perform database update and fetch updated entity
    */
-  private async performUpdate(model: any): Promise<GenerateQrEntity> {
+  private async performUpdate(model: any): Promise<PaymentProviderEntity> {
       try {
         const condition = { _id: this._id };
 
-        const result = await this.session.manager.update(GenerateQrEntity, condition, model);
+        const result = await this.session.manager.update(PaymentProviderEntity, condition, model);
         
         if (result.affected === 0) {
-          throw new Error("GenerateQr not found or no changes made");
+          throw new Error("PaymentProvider not found or no changes made");
         }
         
-        const updatedEntity = await this.session.manager.findOne(GenerateQrEntity, {
+        const updatedEntity = await this.session.manager.findOne(PaymentProviderEntity, {
           where: condition
         });
         
         if (!updatedEntity) {
-          throw new Error("GenerateQr not found after update");
+          throw new Error("PaymentProvider not found after update");
         }
 
         return updatedEntity;
       } catch (error) {
         console.error('ERROR performUpdate', error?.message);
-        throw new Error(`Failed to update generate-qr: ${error?.message}`);
+        throw new Error(`Failed to update payment-provider: ${error?.message}`);
       }
     }
 
@@ -83,10 +89,13 @@ export class UpdateGenerateQrAction  extends UpdateGenerateQrResponse {
   /**
    * Map entity to response properties
    */
-  private async mapEntityToResponse(entity: GenerateQrEntity): Promise<void> {
+  private async mapEntityToResponse(entity: PaymentProviderEntity): Promise<void> {
       try {
         this._id = entity._id;
         this.uniqueId = entity.uniqueId;
+        this.name = entity.name;
+        this.img = entity.img;
+        this.amount = entity.amount;
         this.isActive = entity.isActive;
         this.createdAt = entity.createdAt;
         this.updatedAt = entity.updatedAt;
@@ -100,16 +109,16 @@ export class UpdateGenerateQrAction  extends UpdateGenerateQrResponse {
   /**
    * Build final response
    */
-  private buildResponse(): UpdateGenerateQrResponse {
+  private buildResponse(): UpdatePaymentProviderResponse {
       try {
         return {
           _id: this._id,
           uniqueId: this.uniqueId,
-          paymentProviderId: this.paymentProviderId,
           isActive: this.isActive,
           createdAt: this.createdAt,
           updatedAt: this.updatedAt,
-          userId: this.userId,
+          name: this.name,
+          img: this.img,
           amount: this.amount,
         };
       } catch (error) {

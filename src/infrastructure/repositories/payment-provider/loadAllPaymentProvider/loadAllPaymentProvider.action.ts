@@ -1,11 +1,11 @@
 import { createQueryProps, executeQuery } from '@/shared/utils/query';
 import { QueryProps } from '@domain/models/query.model';
-import { LoadAllGenerateQrResponse, ResponseGenerateQrModel } from '@domain/models/generate-qr.model';
-import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
+import { LoadAllPaymentProviderResponse, ResponsePaymentProviderModel } from '@domain/models/payment-provider.model';
+import { PaymentProviderEntity } from '@infrastructure/entities/payment-provider.entity';
 import { QueryRunner } from 'typeorm';
 
 
-export class LoadAllGenerateQrAction  extends LoadAllGenerateQrResponse {
+export class LoadAllPaymentProviderAction  extends LoadAllPaymentProviderResponse {
 
 
   constructor(private readonly session: QueryRunner) {
@@ -13,16 +13,16 @@ export class LoadAllGenerateQrAction  extends LoadAllGenerateQrResponse {
   }
 
 
-  public async execute(query: QueryProps): Promise<LoadAllGenerateQrResponse> {
+  public async execute(query: QueryProps): Promise<LoadAllPaymentProviderResponse> {
       try {
         const queryProps = await this.buildQueryParams(query);
-        const { data, total } = await this.fetchGenerateQrData(queryProps);
+        const { data, total } = await this.fetchPaymentProviderData(queryProps);
         const transformedData = await this.transformEntities(data);
 
 
         return this.buildResponse(transformedData, total);
       } catch (error) {
-        console.error('ERROR LoadAllGenerateQrAction.execute', error?.message);
+        console.error('ERROR LoadAllPaymentProviderAction.execute', error?.message);
         throw error instanceof Error ? error : new Error(error?.message);
       }
     }
@@ -45,14 +45,14 @@ export class LoadAllGenerateQrAction  extends LoadAllGenerateQrResponse {
   /**
    * Fetch data from database
    */
-  private async fetchGenerateQrData(queryProps: any): Promise<{ data: GenerateQrEntity[], total: number }> {
+  private async fetchPaymentProviderData(queryProps: any): Promise<{ data: PaymentProviderEntity[], total: number }> {
       try {
-        const repository = this.session.manager.getRepository(GenerateQrEntity);
+        const repository = this.session.manager.getRepository(PaymentProviderEntity);
         const { data, total } = await executeQuery(repository, queryProps);
         
         return { data, total };
       } catch (error) {
-        console.error('ERROR fetchGenerateQrData', error?.message);
+        console.error('ERROR fetchPaymentProviderData', error?.message);
         throw new Error(`Failed to fetch data: ${error?.message}`);
       }
     }
@@ -62,7 +62,7 @@ export class LoadAllGenerateQrAction  extends LoadAllGenerateQrResponse {
    * Transform entities to response models
    * Optimized for large datasets with batch processing
    */
-  private async transformEntities(entities: GenerateQrEntity[]): Promise<ResponseGenerateQrModel[]> {
+  private async transformEntities(entities: PaymentProviderEntity[]): Promise<ResponsePaymentProviderModel[]> {
       try {
         if (!entities || entities.length === 0) {
           return [];
@@ -71,7 +71,7 @@ export class LoadAllGenerateQrAction  extends LoadAllGenerateQrResponse {
 
         // For large datasets, process in chunks to avoid memory issues
         const CHUNK_SIZE = 100;
-        const result: ResponseGenerateQrModel[] = [];
+        const result: ResponsePaymentProviderModel[] = [];
 
 
         for (let i = 0; i < entities.length; i += CHUNK_SIZE) {
@@ -92,12 +92,12 @@ export class LoadAllGenerateQrAction  extends LoadAllGenerateQrResponse {
   /**
    * Helper: Map single entity to response model
    */
-  private mapEntityToModel(entity: GenerateQrEntity): ResponseGenerateQrModel {
+  private mapEntityToModel(entity: PaymentProviderEntity): ResponsePaymentProviderModel {
       return {
         _id: entity._id,
         uniqueId: entity.uniqueId,
-        paymentProviderId: entity.paymentProviderId,
-        userId: entity.userId,
+        name: entity.name,
+        img: entity.img,
         amount: entity.amount,
         isActive: entity.isActive,
         createdAt: entity.createdAt,
@@ -109,7 +109,7 @@ export class LoadAllGenerateQrAction  extends LoadAllGenerateQrResponse {
   /**
    * Build final response
    */
-  private buildResponse(items: ResponseGenerateQrModel[], total: number): LoadAllGenerateQrResponse {
+  private buildResponse(items: ResponsePaymentProviderModel[], total: number): LoadAllPaymentProviderResponse {
       try {
         this.items = items;
         this.total = total;

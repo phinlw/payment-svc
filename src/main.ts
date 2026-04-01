@@ -13,10 +13,12 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
     options: {
-      package: ["generateQr"],
+      package: ["generateQr", "paymentProvider"],
       protoPath: [join(__dirname,
          './_proto/common.proto'),
-         join(__dirname, './_proto/generate-qr.proto')],
+         join(__dirname,
+         './_proto/generate-qr.proto'),
+         join(__dirname, './_proto/payment-provider.proto')],
       url: `0.0.0.0:${port}`,
     },
   });

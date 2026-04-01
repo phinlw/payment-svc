@@ -1,24 +1,24 @@
-import { LoadGenerateQrByIdRequest, LoadGenerateQrByIdResponse } from '@domain/models/generate-qr.model';
-import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
+import { LoadPaymentProviderByIdRequest, LoadPaymentProviderByIdResponse } from '@domain/models/payment-provider.model';
+import { PaymentProviderEntity } from '@infrastructure/entities/payment-provider.entity';
 import { QueryRunner } from 'typeorm';
 
 
-export class LoadGenerateQrByIdAction  extends LoadGenerateQrByIdResponse {
+export class LoadPaymentProviderByIdAction  extends LoadPaymentProviderByIdResponse {
   constructor(private readonly session: QueryRunner) {
     super();
   }
 
 
-  public async execute(params: LoadGenerateQrByIdRequest): Promise<LoadGenerateQrByIdResponse|null> {
+  public async execute(params: LoadPaymentProviderByIdRequest): Promise<LoadPaymentProviderByIdResponse|null> {
     try {
         await this.validateParams(params);
-        const entity = await this.fetchGenerateQrById();
+        const entity = await this.fetchPaymentProviderById();
         await this.mapEntityToResponse(entity);
 
 
         return this.buildResponse();
       } catch (error) {
-        console.error('ERROR LoadGenerateQrByIdAction.execute', error?.message);
+        console.error('ERROR LoadPaymentProviderByIdAction.execute', error?.message);
         throw error instanceof Error ? error : new Error(error?.message);
       }
     }
@@ -27,10 +27,10 @@ export class LoadGenerateQrByIdAction  extends LoadGenerateQrByIdResponse {
   /**
    * Validate parameters
    */
-  private async validateParams(params: LoadGenerateQrByIdRequest): Promise<void> { 
+  private async validateParams(params: LoadPaymentProviderByIdRequest): Promise<void> { 
       try {
         if (!params._id) {
-          throw new Error('GenerateQr ID is required');
+          throw new Error('PaymentProvider ID is required');
         }
         this._id = params._id;
       } catch (error) {
@@ -41,9 +41,9 @@ export class LoadGenerateQrByIdAction  extends LoadGenerateQrByIdResponse {
 
 
   /**
-   * Fetch generate-qr entity from database
+   * Fetch payment-provider entity from database
    */
-  private async fetchGenerateQrById(): Promise<GenerateQrEntity> {
+  private async fetchPaymentProviderById(): Promise<PaymentProviderEntity> {
       try {
         const condition = {
           where: {
@@ -52,19 +52,19 @@ export class LoadGenerateQrByIdAction  extends LoadGenerateQrByIdResponse {
         };
 
 
-        const entity = await this.session.manager.findOne(GenerateQrEntity, condition);
+        const entity = await this.session.manager.findOne(PaymentProviderEntity, condition);
 
 
         if (!entity) {
-          throw new Error('GenerateQr not found');
+          throw new Error('PaymentProvider not found');
         }
 
 
         return entity;
       }
       catch (error) {
-        console.error('ERROR fetchGenerateQrById', error?.message);
-        throw new Error(`Failed to fetch generate-qr: ${error?.message}`);
+        console.error('ERROR fetchPaymentProviderById', error?.message);
+        throw new Error(`Failed to fetch payment-provider: ${error?.message}`);
       }
     }
 
@@ -72,12 +72,13 @@ export class LoadGenerateQrByIdAction  extends LoadGenerateQrByIdResponse {
   /**
    * Map entity to response properties
    */
-  private async mapEntityToResponse(entity: GenerateQrEntity): Promise<void> {
+  private async mapEntityToResponse(entity: PaymentProviderEntity): Promise<void> {
       try {
         this._id = entity._id;
         this.uniqueId = entity.uniqueId;
-        this.userId=entity.userId;
-        this.amount=entity.amount;
+        this.name = entity.name;
+        this.img = entity.img;
+        this.amount = entity.amount;
         this.isActive = entity.isActive;
         this.createdAt = entity.createdAt;
         this.updatedAt = entity.updatedAt;
@@ -91,17 +92,17 @@ export class LoadGenerateQrByIdAction  extends LoadGenerateQrByIdResponse {
   /**
    * Build final response
    */
-  private buildResponse(): LoadGenerateQrByIdResponse {
+  private buildResponse(): LoadPaymentProviderByIdResponse {
       try {
         return {
           _id: this._id,
-          paymentProviderId: this.paymentProviderId,
-          userId: this.userId,
-          amount: this.amount,
           uniqueId: this.uniqueId,
           isActive: this.isActive,
           createdAt: this.createdAt,
           updatedAt: this.updatedAt,
+          name: this.name,
+          img: this.img,
+          amount: this.amount,
         };
       } catch (error) {
         console.error('ERROR buildResponse', error?.message);

@@ -10,11 +10,14 @@ export enum GenerateQrStatus {
   name: 'generate_rq',
 })
 export class GenerateQrEntity {
-  @Column("varchar", { length: 50, nullable: true })
+  @Column('varchar', { length: 50, nullable: true })
   _id: string;
 
-  @PrimaryGeneratedColumn({ type: "integer" })
+  @PrimaryGeneratedColumn({ type: 'integer' })
   uniqueId: number;
+
+  @Column()
+  paymentProviderId: string;
 
   @Column()
   userId: string;

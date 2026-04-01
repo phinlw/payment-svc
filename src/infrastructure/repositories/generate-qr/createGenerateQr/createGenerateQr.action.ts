@@ -1,18 +1,29 @@
 import { _ID } from '@shared/utils/base.util';
-import { GenerateQrModel, CreateGenerateQrResponse, CreateGenerateQrRequest } from '@domain/models/generate-qr.model';
+import {
+  GenerateQrModel,
+  CreateGenerateQrResponse,
+  CreateGenerateQrRequest,
+} from '@domain/models/generate-qr.model';
 import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
+import { PaymentProviderEntity } from '@infrastructure/entities/payment-provider.entity';
 import { QueryRunner } from 'typeorm';
 import axios from 'axios';
-import { generateLdbHeaders, getLdbApiUrl, fetchAccessToken } from '@shared/utils/ldb-header.util';
+import {
+  generateLdbHeaders,
+  getLdbApiUrl,
+  fetchAccessToken,
+} from '@shared/utils/ldb-header.util';
 
-export class CreateGenerateQrAction  extends GenerateQrModel {
+export class CreateGenerateQrAction extends GenerateQrModel {
   private qrApiResponse: any = null;
 
   constructor(private readonly session: QueryRunner) {
     super();
   }
 
-  public async execute(params: CreateGenerateQrRequest): Promise<CreateGenerateQrResponse> {
+  public async execute(
+    params: CreateGenerateQrRequest,
+  ): Promise<CreateGenerateQrResponse> {
     try {
       await this.validateAndBuildParams(params);
       const qrBody = this.buildQrRequestBody(params);
@@ -29,15 +40,24 @@ export class CreateGenerateQrAction  extends GenerateQrModel {
       return this.buildResponse();
     } catch (error) {
       console.error('ERROR CreateGenerateQrAction.execute', error?.message);
-      throw error instanceof Error ? error : new Error(error?.message || String(error));
+      throw error instanceof Error
+        ? error
+        : new Error(error?.message || String(error));
     }
   }
 
   /**
    * Validate and build parameters
    */
-  private async validateAndBuildParams(params: CreateGenerateQrRequest): Promise<void> {
+  private async validateAndBuildParams(
+    params: CreateGenerateQrRequest,
+  ): Promise<void> {
     try {
+      await this.validatePaymentProvider(
+        params.paymentProviderId,
+        params.amount,
+      );
+      this.paymentProviderId = params.paymentProviderId;
       this.userId = params.userId;
       this.amount = params.amount;
       this.isActive = true;
@@ -45,18 +65,55 @@ export class CreateGenerateQrAction  extends GenerateQrModel {
       this.updatedAt = new Date();
     } catch (error) {
       console.error('ERROR validateAndBuildParams', error?.message);
-      throw new Error(`Failed to validate parameters: ${error?.message || String(error)}`);
+      throw new Error(
+        `Failed to validate parameters: ${error?.message || String(error)}`,
+      );
+    }
+  }
+
+  /**
+   * Validate that the paymentProviderId exists in the database
+   */
+  private async validatePaymentProvider(
+    paymentProviderId: string,
+    amount: number,
+  ): Promise<void> {
+    if (!paymentProviderId) {
+      throw new Error('paymentProviderId is required');
+    }
+
+    const provider = await this.session.manager.findOne(PaymentProviderEntity, {
+      where: { _id: paymentProviderId, isActive: true },
+    });
+
+    if (!provider) {
+      throw new Error(
+        `Payment provider with id '${paymentProviderId}' not found or inactive`,
+      );
+    }
+
+    const allowedAmounts = Array.isArray(provider.amount)
+      ? provider.amount
+      : [];
+
+    if (!allowedAmounts.includes(amount)) {
+      throw new Error(
+        `Amount '${amount}' is not allowed for payment provider '${paymentProviderId}'. Allowed amounts: ${allowedAmounts.join(', ') || 'none'}`,
+      );
     }
   }
 
   /**
    * Prepare model for insertion
    */
-  private async prepareGenerateQrModel(qrBody: Record<string, any>): Promise<GenerateQrModel> {
+  private async prepareGenerateQrModel(
+    qrBody: Record<string, any>,
+  ): Promise<GenerateQrModel> {
     try {
       const model: GenerateQrModel = {
         _id: _ID(),
         uniqueId: 0,
+        paymentProviderId: this.paymentProviderId,
         userId: this.userId,
         qrType: qrBody.qrType,
         platformType: qrBody.platformType,
@@ -82,7 +139,9 @@ export class CreateGenerateQrAction  extends GenerateQrModel {
       return model;
     } catch (error) {
       console.error('ERROR prepareGenerateQrModel', error?.message);
-      throw new Error(`Failed to prepare model: ${error?.message || String(error)}`);
+      throw new Error(
+        `Failed to prepare model: ${error?.message || String(error)}`,
+      );
     }
   }
 
@@ -91,7 +150,10 @@ export class CreateGenerateQrAction  extends GenerateQrModel {
    */
   private async persistGenerateQr(model: GenerateQrModel): Promise<void> {
     try {
-      const savedEntity = await this.session.manager.save(GenerateQrEntity, model);
+      const savedEntity = await this.session.manager.save(
+        GenerateQrEntity,
+        model,
+      );
 
       if (savedEntity) {
         this._id = savedEntity._id;
@@ -101,14 +163,18 @@ export class CreateGenerateQrAction  extends GenerateQrModel {
       }
     } catch (error) {
       console.error('ERROR persistGenerateQr', error?.message);
-      throw new Error(`Failed to persist entity: ${error?.message || String(error)}`);
+      throw new Error(
+        `Failed to persist entity: ${error?.message || String(error)}`,
+      );
     }
   }
 
   /**
    * Build QR request body from params
    */
-  private buildQrRequestBody(params: CreateGenerateQrRequest): Record<string, any> {
+  private buildQrRequestBody(
+    params: CreateGenerateQrRequest,
+  ): Record<string, any> {
     // console.log('buildQrRequestBody', params);
     return {
       qrType: params.qrType || '38',
@@ -148,7 +214,8 @@ export class CreateGenerateQrAction  extends GenerateQrModel {
 
       const apiHeaders = {
         'x-client-transaction-id': headers['x-client-transaction-id'],
-        'x-client-Transaction-datetime': headers['x-client-Transaction-datetime'],
+        'x-client-Transaction-datetime':
+          headers['x-client-Transaction-datetime'],
         partnerId: headers.partnerId,
         digest: headers.digest,
         signature: headers.signature,
@@ -199,7 +266,9 @@ export class CreateGenerateQrAction  extends GenerateQrModel {
       };
     } catch (error) {
       console.error('ERROR buildResponse', error?.message);
-      throw new Error(`Failed to build response: ${error?.message || String(error)}`);
+      throw new Error(
+        `Failed to build response: ${error?.message || String(error)}`,
+      );
     }
   }
 }

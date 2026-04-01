@@ -7,6 +7,7 @@ export enum GenerateQrStatus {
 }
 
 export class GenerateQrModel extends DefaultModel {
+  paymentProviderId: string;
   userId: string;
   qrType?: string;
   platformType?: string;
@@ -36,6 +37,7 @@ export class DeeplinkMetaData {
 }
 
 export class CreateGenerateQrRequest {
+  paymentProviderId: string;
   userId: string;
   qrType?: string;
   platformType?: string;

@@ -5,6 +5,7 @@ import { EnvironmentConfigModule } from '../environment-config/environment-confi
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
+import { PaymentProviderEntity } from '@infrastructure/entities/payment-provider.entity';
 
 export const getTypeOrmModuleOptions = (
   config: EnvironmentConfigService,
@@ -15,7 +16,7 @@ export const getTypeOrmModuleOptions = (
   username: config.getDBUser(),
   password: config.getDBPass(),
   database: config.getDBName(),
-  entities: [GenerateQrEntity],
+  entities: [GenerateQrEntity, PaymentProviderEntity],
   synchronize: true,
 });
 
