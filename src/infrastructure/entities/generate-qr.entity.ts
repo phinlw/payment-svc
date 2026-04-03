@@ -64,6 +64,9 @@ export class GenerateQrEntity {
   @Column({ type: 'jsonb', nullable: true })
   deeplinkMetaData: any;
 
+  @Column({ type: 'jsonb', nullable: true })
+  deeplinkInfo: any;
+
   @Column({ nullable: true })
   metadata: string;
 

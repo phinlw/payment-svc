@@ -11,6 +11,8 @@ service GenerateQrService {
   rpc GenerateQrLoadAll(common.QueryString) returns (LoadAllGenerateQrResponse);
   rpc GenerateQrLoadById(LoadGenerateQrByIdRequest) returns (LoadGenerateQrByIdResponse);
   rpc GenerateQr(GenerateQrRequest) returns (GenerateQrResponse);
+  rpc GenerateQrNotifyPayment(NotifyPaymentRequest) returns (NotifyPaymentResponse);
+  rpc GenerateQrRetryPayment(RetryPaymentRequest) returns (RetryPaymentResponse);
 }
 
 message CreateGenerateQrRequest {
@@ -49,8 +51,14 @@ message CreateGenerateQrResponse {
     string ref2 = 8;
     string ref3 = 9;
     string providerName = 10;
+    DeeplinkInfo deeplinkInfo = 11;
     string createdAt = 102;
     string updatedAt = 103;
+}
+
+message DeeplinkInfo {
+    string transactionId = 1;
+    string deeplinkURL = 2;
 }
 
 message DeleteGenerateQrRequest {
@@ -91,19 +99,47 @@ message LoadGenerateQrByIdRequest {
 message LoadGenerateQrByIdResponse {
     string _id = 100;
     int32 uniqueId = 101;
+    string paymentProviderId = 104;
+    string userId = 1;
+    string expiryTime = 2;
+    string qrCode = 3;
+    string qrCodeUrl = 4;
+    double amount = 5;
+    string currency = 6;
+    string ref1 = 7;
+    string ref2 = 8;
+    string ref3 = 9;
+    string providerName = 10;
+    DeeplinkInfo deeplinkInfo = 11;
+    string callbackUrl = 12;
+    string callbackKey = 13;
+    string status = 14;
     bool isActive = 102;
     string createdAt = 103;
-    string updatedAt = 104;
-    string name = 1;
+    string updatedAt = 105;
 }
 
 message ResponseGenerateQrModel {
     string _id = 100;
     int32 uniqueId = 101;
+    string paymentProviderId = 104;
+    string userId = 1;
+    string expiryTime = 2;
+    string qrCode = 3;
+    string qrCodeUrl = 4;
+    double amount = 5;
+    string currency = 6;
+    string ref1 = 7;
+    string ref2 = 8;
+    string ref3 = 9;
+    string providerName = 10;
+    DeeplinkInfo deeplinkInfo = 11;
+    string callbackUrl = 12;
+    string callbackKey = 13;
+    string status = 14;
     bool isActive = 102;
     string createdAt = 103;
-    string updatedAt = 104;
-    string name = 1;
+    string updatedAt = 105;
 }
 
 message DeeplinkMetaData {
@@ -147,4 +183,57 @@ message QrApiResponse {
 message GenerateQrResponse {
     bool success = 1;
     QrApiResponse apiResponse = 2;
+}
+
+message NotifyPaymentRequest {
+  // TODO: Add request fields
+  // Example: string _id = 1;
+}
+
+message NotifyPaymentResponse {
+  // TODO: Add response fields
+  // Example: string _id = 100;
+  // Example: int32 uniqueId = 101;
+  // Example: bool isActive = 102;
+  // Example: string createdAt = 103;
+  // Example: string updatedAt = 104;
+}
+
+message RetryPaymentRequest {
+  string _id = 1;
+}
+
+message RetryPaymentResponse {
+  int32 code = 100;
+  string status = 101;
+  string message = 102;
+  RetryPaymentData data = 103;
+}
+
+message RetryPaymentData {
+  string _id = 100;
+  int32 uniqueId = 101;
+  string paymentProviderId = 1;
+  string userId = 2;
+  string qrType = 3;
+  string platformType = 4;
+  string merchantId = 5;
+  string terminalId = 6;
+  string promotionCode = 7;
+  string expiryTime = 8;
+  string makeTxnTime = 9;
+  double amount = 10;
+  string currency = 11;
+  string ref1 = 12;
+  string ref2 = 13;
+  string ref3 = 14;
+  string mobileNum = 15;
+  string qrCode = 16;
+  string qrCodeUrl = 17;
+  string callbackUrl = 18;
+  string callbackKey = 19;
+  string recordStatus = 20;
+  bool isActive = 102;
+  string createdAt = 103;
+  string updatedAt = 104;
 }

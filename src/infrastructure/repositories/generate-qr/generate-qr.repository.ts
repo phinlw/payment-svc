@@ -5,18 +5,25 @@ import { DataSource, Repository } from 'typeorm';
 import { handleGrpcOperation } from '@shared/utils/base.util';
 
 import {
-    CreateGenerateQrRequest, 
-    CreateGenerateQrResponse, 
-    UpdateGenerateQrRequest, 
-    UpdateGenerateQrResponse, 
-    DeleteGenerateQrRequest, 
-    DeleteGenerateQrResponse, 
-    LoadAllGenerateQrResponse, 
-    LoadGenerateQrByIdRequest, 
-    LoadGenerateQrByIdResponse,
-    LoadAllGenerateQrRequest,
-    GenerateQrRequest,
-    GenerateQrResponse,
+  CreateGenerateQrRequest,
+  CreateGenerateQrResponse,
+  UpdateGenerateQrRequest,
+  UpdateGenerateQrResponse,
+  DeleteGenerateQrRequest,
+  DeleteGenerateQrResponse,
+  LoadAllGenerateQrResponse,
+  LoadGenerateQrByIdRequest,
+  LoadGenerateQrByIdResponse,
+  LoadAllGenerateQrRequest,
+  GenerateQrRequest,
+  GenerateQrResponse,
+  NotifyPaymentRequest,
+  NotifyPaymentResponse,
+
+
+  RetryPaymentRequest,
+
+  RetryPaymentResponse,
     } from '@domain/models/generate-qr.model';
 import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
 import { GenerateQrInterface } from '@domain/repositories/generate-qr.interface';
@@ -43,6 +50,12 @@ import { GenerateQrValidation } from './generateQr/generateQr.validation';
 import { QueryProps } from '@domain/models/query.model';
   
 
+import { NotifyPaymentValidation } from './notifyPayment/notifyPayment.validation';
+import { NotifyPaymentAction } from './notifyPayment/notifyPayment.action';
+  
+import { RetryPaymentValidation } from './retryPayment/retryPayment.validation';
+import { RetryPaymentAction } from './retryPayment/retryPayment.action';
+  
 @Injectable()
 export class GenerateQrRepoImpl implements GenerateQrInterface {
   constructor(
@@ -52,77 +65,88 @@ export class GenerateQrRepoImpl implements GenerateQrInterface {
   ) {}
 
   async create(
-    generateQr: CreateGenerateQrRequest, 
+    generateQr: CreateGenerateQrRequest,
     metadata?: any | Metadata,
-    ): Promise<CreateGenerateQrResponse | null> {
+  ): Promise<CreateGenerateQrResponse | null> {
     return handleGrpcOperation(async () => {
-    const session = this.dataSource.createQueryRunner();
-    await session.connect();
-    await session.startTransaction();
-    try {
-      await new CreateGenerateQrValidation(this.generateQrEntity).execute(generateQr);
+      const session = this.dataSource.createQueryRunner();
+      await session.connect();
+      await session.startTransaction();
+      try {
+        await new CreateGenerateQrValidation(this.generateQrEntity).execute(
+          generateQr,
+        );
 
-      const result = await new CreateGenerateQrAction(session).execute(generateQr);
+        const result = await new CreateGenerateQrAction(session).execute(
+          generateQr,
+        );
 
-      await session.commitTransaction();
-      return result
-    } catch (error) {
-      await session.rollbackTransaction();
-      throw error;
-    } finally {
-      await session.release();
-    }
-  }, 'CreateGenerateQr')
-}
+        await session.commitTransaction();
+        return result;
+      } catch (error) {
+        await session.rollbackTransaction();
+        throw error;
+      } finally {
+        await session.release();
+      }
+    }, 'CreateGenerateQr');
+  }
 
   async update(
-  generateQr: UpdateGenerateQrRequest, 
+    generateQr: UpdateGenerateQrRequest,
     metadata?: any | Metadata,
   ): Promise<UpdateGenerateQrResponse | null> {
     return handleGrpcOperation(async () => {
-    const session = this.dataSource.createQueryRunner();
-    await session.connect();
-    await session.startTransaction();
-    try {
-      await new UpdateGenerateQrValidation( this.generateQrEntity).execute(generateQr);
+      const session = this.dataSource.createQueryRunner();
+      await session.connect();
+      await session.startTransaction();
+      try {
+        await new UpdateGenerateQrValidation(this.generateQrEntity).execute(
+          generateQr,
+        );
 
-      const result = await new UpdateGenerateQrAction(session).execute(generateQr);
+        const result = await new UpdateGenerateQrAction(session).execute(
+          generateQr,
+        );
 
-      await session.commitTransaction();
-      return result
-    } catch (error) {
-      await session.rollbackTransaction();
-      throw error;
-    } finally {
-      await session.release();
-    }
-  }, 'UpdateGenerateQr')
-}
+        await session.commitTransaction();
+        return result;
+      } catch (error) {
+        await session.rollbackTransaction();
+        throw error;
+      } finally {
+        await session.release();
+      }
+    }, 'UpdateGenerateQr');
+  }
 
   async delete(
-   generateQr: DeleteGenerateQrRequest, 
+    generateQr: DeleteGenerateQrRequest,
     metadata?: any | Metadata,
   ): Promise<DeleteGenerateQrResponse | null> {
     return handleGrpcOperation(async () => {
-    const session = this.dataSource.createQueryRunner();
-    await session.connect();
-    await session.startTransaction();
-    try {
+      const session = this.dataSource.createQueryRunner();
+      await session.connect();
+      await session.startTransaction();
+      try {
+        await new DeleteGenerateQrValidation(this.generateQrEntity).execute(
+          generateQr,
+        );
 
-      await new DeleteGenerateQrValidation(this.generateQrEntity).execute(generateQr);
+        const result = await new DeleteGenerateQrAction(session).execute(
+          generateQr,
+        );
 
-      const result = await new DeleteGenerateQrAction(session).execute(generateQr);
-
-      await session.commitTransaction();    
-      return result
-    } catch (error) {
-      await session.rollbackTransaction();
-      throw error;
-    } finally {
-      await session.release();
-    }
-  }, 'DeleteGenerateQr')
-}
+        await session.commitTransaction();
+        return result;
+      } catch (error) {
+        await session.rollbackTransaction();
+        throw error;
+      } finally {
+        await session.release();
+      }
+    }, 'DeleteGenerateQr');
+  }
 
   async loadAll(query: QueryProps): Promise<LoadAllGenerateQrResponse> {
     const session = this.dataSource.createQueryRunner();
@@ -132,42 +156,46 @@ export class GenerateQrRepoImpl implements GenerateQrInterface {
       // const data = {};
       // await new LoadAllGenerateQrValidation(this.generateQrEntity).execute(data);
 
-      const result: LoadAllGenerateQrResponse = await new LoadAllGenerateQrAction(session).execute(query);
+      const result: LoadAllGenerateQrResponse =
+        await new LoadAllGenerateQrAction(session).execute(query);
 
       await session.commitTransaction();
-      return result
+      return result;
     } catch (error) {
       await session.rollbackTransaction();
       throw error;
     } finally {
       await session.release();
     }
-}
+  }
 
   async loadById(
     generateQr: LoadGenerateQrByIdRequest,
-    metadata?: any | Metadata
-    ): Promise<LoadGenerateQrByIdResponse | null> {
+    metadata?: any | Metadata,
+  ): Promise<LoadGenerateQrByIdResponse | null> {
     return handleGrpcOperation(async () => {
-    const session = this.dataSource.createQueryRunner();
-    await session.connect();
-    await session.startTransaction();
-    try {
+      const session = this.dataSource.createQueryRunner();
+      await session.connect();
+      await session.startTransaction();
+      try {
+        await new LoadGenerateQrByIdValidation(this.generateQrEntity).execute(
+          generateQr,
+        );
 
-      await new LoadGenerateQrByIdValidation(this.generateQrEntity).execute(generateQr);
+        const result = await new LoadGenerateQrByIdAction(session).execute(
+          generateQr,
+        );
 
-      const result = await new LoadGenerateQrByIdAction(session).execute(generateQr);
-
-      await session.commitTransaction();
-      return result
-    } catch (error) {
-      await session.rollbackTransaction();
-      throw error;
-    } finally {
-      await session.release();
-    }
-    }, 'LoadByIdGenerateQr')
-    }
+        await session.commitTransaction();
+        return result;
+      } catch (error) {
+        await session.rollbackTransaction();
+        throw error;
+      } finally {
+        await session.release();
+      }
+    }, 'LoadByIdGenerateQr');
+  }
 
   async generateQr(
     params: GenerateQrRequest,
@@ -183,6 +211,48 @@ export class GenerateQrRepoImpl implements GenerateQrInterface {
       } catch (error) {
         throw error;
       }
-    }, 'GenerateQr')
+    }, 'GenerateQr');
+  }
+
+  async notifyPayment(
+    params: NotifyPaymentRequest,
+    metadata?: any | Metadata,
+  ): Promise<NotifyPaymentResponse | null> {
+    const session = this.dataSource.createQueryRunner();
+    await session.connect();
+    await session.startTransaction();
+    try {
+      await new NotifyPaymentValidation(this.generateQrEntity).execute(params);
+      const result = await new NotifyPaymentAction(session).execute(params);
+      await session.commitTransaction();
+      return result;
+    } catch (error) {
+      await session.rollbackTransaction();
+      throw error;
+    } finally {
+      await session.release();
+    }
+  }
+
+  async retryPayment(
+    params: RetryPaymentRequest,
+    metadata?: any | Metadata,
+  ): Promise<RetryPaymentResponse | null> {
+    return handleGrpcOperation(async () => {
+      const session = this.dataSource.createQueryRunner();
+      await session.connect();
+      await session.startTransaction();
+      try {
+        await new RetryPaymentValidation(this.generateQrEntity).execute(params);
+        const result = await new RetryPaymentAction(session).execute(params);
+        await session.commitTransaction();
+        return result;
+      } catch (error) {
+        await session.rollbackTransaction();
+        throw error;
+      } finally {
+        await session.release();
+      }
+    }, 'RetryPayment')
   }
 }

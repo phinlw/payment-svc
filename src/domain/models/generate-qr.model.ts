@@ -23,6 +23,7 @@ export class GenerateQrModel extends DefaultModel {
   ref3?: string;
   mobileNum?: string;
   deeplinkMetaData?: DeeplinkMetaData;
+  deeplinkInfo?: any;
   metadata?: string;
   qrCode?: string;
   qrCodeUrl?: string;
@@ -76,6 +77,7 @@ export class CreateGenerateQrResponse {
   ref2?: string;
   ref3?: string;
   providerName?: string;
+  deeplinkInfo?: any;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -117,4 +119,61 @@ export class GenerateQrRequest {
 export class GenerateQrResponse {
   success: boolean;
   apiResponse: any;
+}
+
+export class NotifyPaymentRequest {
+  notifyId: number;
+  processingStatus: string;
+  partnerOrderID: string;
+  partnerPaymentID: string;
+  paymentBank: string;
+  paymentAt: string;
+  PaymentReference: string;
+  amount: number;
+  currency: string;
+}
+
+export class NotifyPaymentResponse {
+  code: number;
+  status: string;
+  message: string;
+}
+
+export class RetryPaymentRequest {
+  _id: string;
+}
+
+export class RetryPaymentData {
+  _id?: string;
+  uniqueId?: number;
+  paymentProviderId?: string;
+  userId?: string;
+  qrType?: string;
+  platformType?: string;
+  merchantId?: string;
+  terminalId?: string;
+  promotionCode?: string;
+  expiryTime?: string;
+  makeTxnTime?: string;
+  amount?: number;
+  currency?: string;
+  ref1?: string;
+  ref2?: string;
+  ref3?: string;
+  mobileNum?: string;
+  qrCode?: string;
+  qrCodeUrl?: string;
+  callbackUrl?: string;
+  callbackKey?: string;
+  recordStatus?: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export class RetryPaymentResponse {
+  code: number;
+  status: string;
+  message: string;
+  data?: RetryPaymentData;
 }

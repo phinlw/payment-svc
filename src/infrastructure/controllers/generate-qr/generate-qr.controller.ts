@@ -3,13 +3,14 @@ import { Metadata } from '@grpc/grpc-js';
 import { Controller, Inject, UseGuards } from '@nestjs/common';
 import type { QueryProps } from "@domain/models/query.model";
 
-import { 
-  CreateGenerateQrUsecase, 
-  UpdateGenerateQrUsecase, 
-  DeleteGenerateQrUsecase, 
-  LoadAllGenerateQrUsecase, 
+import {
+  CreateGenerateQrUsecase,
+  UpdateGenerateQrUsecase,
+  DeleteGenerateQrUsecase,
+  LoadAllGenerateQrUsecase,
   LoadGenerateQrByIdUsecase,
   GenerateQrUsecase,
+  RetryPaymentUsecase,
 } from '@usecases/generate-qr.usecase';
 import {
   CreateGenerateQrRequest,
@@ -23,97 +24,113 @@ import {
   LoadGenerateQrByIdResponse,
   GenerateQrRequest,
   GenerateQrResponse,
+  RetryPaymentRequest,
+  RetryPaymentResponse,
 } from '@domain/models/generate-qr.model';
 import { UseCaseProxy } from '@infrastructure/usecases-proxy/usecases-proxy';
 import { UsecasesProxyModule } from '@infrastructure/usecases-proxy/usecases-proxy.module';
-import {GenerateQrInterface} from '@domain/repositories/generate-qr.interface';
 import { APIGrpcGuard } from "@/shared/utils/api-access.util";
 
 
 @UseGuards(APIGrpcGuard)
 @Controller('generateQr')
-export class GenerateQrController implements GenerateQrInterface {
+export class GenerateQrController {
   constructor(
-  @Inject(UsecasesProxyModule.POST_CREATE_GENERATE_RQ_USECASE_PROXY)
-  private readonly createGenerateQrUsecaseProxy: UseCaseProxy<CreateGenerateQrUsecase>,
+    @Inject(UsecasesProxyModule.POST_CREATE_GENERATE_RQ_USECASE_PROXY)
+    private readonly createGenerateQrUsecaseProxy: UseCaseProxy<CreateGenerateQrUsecase>,
 
-  @Inject(UsecasesProxyModule.POST_UPDATE_GENERATE_RQ_USECASE_PROXY)
-  private readonly updateGenerateQrUsecaseProxy: UseCaseProxy<UpdateGenerateQrUsecase>,
+    @Inject(UsecasesProxyModule.POST_UPDATE_GENERATE_RQ_USECASE_PROXY)
+    private readonly updateGenerateQrUsecaseProxy: UseCaseProxy<UpdateGenerateQrUsecase>,
 
-  @Inject(UsecasesProxyModule.POST_DELETE_GENERATE_RQ_USECASE_PROXY)
-  private readonly deleteGenerateQrUsecaseProxy: UseCaseProxy<DeleteGenerateQrUsecase>,
+    @Inject(UsecasesProxyModule.POST_DELETE_GENERATE_RQ_USECASE_PROXY)
+    private readonly deleteGenerateQrUsecaseProxy: UseCaseProxy<DeleteGenerateQrUsecase>,
 
-  @Inject(UsecasesProxyModule.POST_LOAD_ALL_GENERATE_RQ_USECASE_PROXY)
-  private readonly loadAllGenerateQrUsecaseProxy: UseCaseProxy<LoadAllGenerateQrUsecase>,
+    @Inject(UsecasesProxyModule.POST_LOAD_ALL_GENERATE_RQ_USECASE_PROXY)
+    private readonly loadAllGenerateQrUsecaseProxy: UseCaseProxy<LoadAllGenerateQrUsecase>,
 
-  @Inject(UsecasesProxyModule.POST_LOAD_BY_ID_GENERATE_RQ_USECASE_PROXY)
-  private readonly loadGenerateQrByIdUsecaseProxy: UseCaseProxy<LoadGenerateQrByIdUsecase>,
+    @Inject(UsecasesProxyModule.POST_LOAD_BY_ID_GENERATE_RQ_USECASE_PROXY)
+    private readonly loadGenerateQrByIdUsecaseProxy: UseCaseProxy<LoadGenerateQrByIdUsecase>,
 
-  @Inject(UsecasesProxyModule.POST_GENERATE_QR_USECASE_PROXY)
-  private readonly generateQrUsecaseProxy: UseCaseProxy<GenerateQrUsecase>,
+    @Inject(UsecasesProxyModule.POST_GENERATE_QR_USECASE_PROXY)
+    private readonly generateQrUsecaseProxy: UseCaseProxy<GenerateQrUsecase>,
+    @Inject(UsecasesProxyModule.POST_RETRY_PAYMENT_GENERATE_QR_USECASE_PROXY)
+    private readonly retryPaymentGenerateQrUsecaseProxy: UseCaseProxy<RetryPaymentUsecase>,
   ) {}
 
-  @GrpcMethod("GenerateQrService", "GenerateQrCreate")
+  @GrpcMethod('GenerateQrService', 'GenerateQrCreate')
   async create(
     generateQr: CreateGenerateQrRequest,
-    metadata: Metadata
-    ): Promise<CreateGenerateQrResponse| null> {
+    metadata: Metadata,
+  ): Promise<CreateGenerateQrResponse | null> {
     const run = await this.createGenerateQrUsecaseProxy
-    .getInstance()
-    .execute(generateQr,metadata);
+      .getInstance()
+      .execute(generateQr, metadata);
     return run;
   }
 
-  @GrpcMethod("GenerateQrService", "GenerateQrUpdate")
+  @GrpcMethod('GenerateQrService', 'GenerateQrUpdate')
   async update(
     generateQr: UpdateGenerateQrRequest,
-    metadata: Metadata
-    ): Promise<UpdateGenerateQrResponse | null> {
+    metadata: Metadata,
+  ): Promise<UpdateGenerateQrResponse | null> {
     const run = await this.updateGenerateQrUsecaseProxy
-    .getInstance()
-    .execute(generateQr,metadata);
+      .getInstance()
+      .execute(generateQr, metadata);
     return run;
   }
 
-  @GrpcMethod("GenerateQrService", "GenerateQrDelete")
+  @GrpcMethod('GenerateQrService', 'GenerateQrDelete')
   async delete(
     params: DeleteGenerateQrRequest,
-    metadata: Metadata
-    ): Promise<DeleteGenerateQrResponse | null> {
+    metadata: Metadata,
+  ): Promise<DeleteGenerateQrResponse | null> {
     const run = await this.deleteGenerateQrUsecaseProxy
-    .getInstance()
-    .execute(params,metadata);
+      .getInstance()
+      .execute(params, metadata);
     return run;
   }
 
-  @GrpcMethod("GenerateQrService", "GenerateQrLoadAll")
-  async loadAll(quuery: QueryProps, metadata: Metadata): Promise<LoadAllGenerateQrResponse> {
+  @GrpcMethod('GenerateQrService', 'GenerateQrLoadAll')
+  async loadAll(
+    quuery: QueryProps,
+    metadata: Metadata,
+  ): Promise<LoadAllGenerateQrResponse> {
     const run = await this.loadAllGenerateQrUsecaseProxy
-    .getInstance()
-    .execute(quuery,metadata);
+      .getInstance()
+      .execute(quuery, metadata);
     return run;
   }
 
-  @GrpcMethod("GenerateQrService", "GenerateQrLoadById")
+  @GrpcMethod('GenerateQrService', 'GenerateQrLoadById')
   async loadById(
     params: LoadGenerateQrByIdRequest,
-    metadata: Metadata
-    ): Promise<LoadGenerateQrByIdResponse | null> {
+    metadata: Metadata,
+  ): Promise<LoadGenerateQrByIdResponse | null> {
     const run = await this.loadGenerateQrByIdUsecaseProxy
-    .getInstance()
-    .execute(params,metadata);
+      .getInstance()
+      .execute(params, metadata);
     return run;
   }
 
-  @GrpcMethod("GenerateQrService", "GenerateQr")
+  @GrpcMethod('GenerateQrService', 'GenerateQr')
   async generateQr(
     params: GenerateQrRequest,
-    metadata: Metadata
-    ): Promise<GenerateQrResponse | null> {
+    metadata: Metadata,
+  ): Promise<GenerateQrResponse | null> {
     const run = await this.generateQrUsecaseProxy
-    .getInstance()
-    .execute(params,metadata);
+      .getInstance()
+      .execute(params, metadata);
     return run;
   }
-  
+
+  @GrpcMethod('GenerateQrService', 'GenerateQrRetryPayment')
+  async retryPayment(
+    params: RetryPaymentRequest,
+    metadata: Metadata,
+  ): Promise<RetryPaymentResponse | null> {
+    const run = await this.retryPaymentGenerateQrUsecaseProxy
+      .getInstance()
+      .execute(params);
+    return run;
+  }
 }

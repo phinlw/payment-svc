@@ -14,6 +14,18 @@ import {
   LoadGenerateQrByIdRequest,
   GenerateQrRequest,
   GenerateQrResponse,
+
+
+  NotifyPaymentRequest,
+
+  NotifyPaymentResponse,
+
+
+
+  RetryPaymentRequest,
+
+
+  RetryPaymentResponse,
 } from '@domain/models/generate-qr.model';
 
 
@@ -107,6 +119,35 @@ export class GenerateQrUsecase extends BaseGenerateQrUsecase {
     const result = await this.generateQrInterface.generateQr(params, metadata);
     if (!result) {
       throw new Error('Failed to generate QR');
+    }
+    return result;
+  }
+}
+
+export class NotifyPaymentUsecase extends BaseGenerateQrUsecase {
+  async execute(
+    params: NotifyPaymentRequest,
+    metadata?: Metadata | any,
+  ): Promise<NotifyPaymentResponse> {
+    this.logExecution('NotifyPaymentUsecase');
+    const result = await this.generateQrInterface.notifyPayment(params, metadata);
+    if (!result) {
+      throw new Error('Failed to execute notifyPayment');
+    }
+    return result;
+  }
+}
+
+
+export class RetryPaymentUsecase extends BaseGenerateQrUsecase {
+  async execute(
+    params: RetryPaymentRequest,
+    metadata?: Metadata | any,
+  ): Promise<RetryPaymentResponse> {
+    this.logExecution('RetryPaymentUsecase');
+    const result = await this.generateQrInterface.retryPayment(params, metadata);
+    if (!result) {
+      throw new Error('Failed to execute retryPayment');
     }
     return result;
   }

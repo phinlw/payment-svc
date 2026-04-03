@@ -24,5 +24,9 @@ async function bootstrap() {
   });
 
   await app.startAllMicroservices();
+
+  const httpPort = process.env.HTTP_PORT || 3000;
+  await app.listen(httpPort);
+  console.log(`HTTP server listening on port ${httpPort}`);
 }
 bootstrap();

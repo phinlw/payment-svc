@@ -12,6 +12,18 @@ import {
   LoadGenerateQrByIdResponse,
   GenerateQrRequest,
   GenerateQrResponse,
+
+
+  NotifyPaymentRequest,
+
+  NotifyPaymentResponse,
+
+
+
+  RetryPaymentRequest,
+
+
+  RetryPaymentResponse,
 } from '../models/generate-qr.model';
 
 export interface GenerateQrInterface {
@@ -36,4 +48,6 @@ export interface GenerateQrInterface {
     params: GenerateQrRequest,
     metadata?: Metadata
     ): Promise<GenerateQrResponse | null>;
+  notifyPayment(params: NotifyPaymentRequest, metadata?: Metadata): Promise<NotifyPaymentResponse | null>;
+  retryPayment(params: RetryPaymentRequest, metadata?: Metadata): Promise<RetryPaymentResponse | null>;
 }

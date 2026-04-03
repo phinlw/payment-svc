@@ -22,7 +22,9 @@ export class UsecasesProxyModule {
   static POST_UPDATE_PAYMENT_PROVIDER_USECASE_PROXY = 'updatePaymentProviderUsecaseProxy';
   static POST_DELETE_PAYMENT_PROVIDER_USECASE_PROXY = 'deletePaymentProviderUsecaseProxy';
   static POST_LOAD_ALL_PAYMENT_PROVIDER_USECASE_PROXY = 'loadAllPaymentProviderUsecaseProxy';
-  static POST_LOAD_BY_ID_PAYMENT_PROVIDER_USECASE_PROXY = 'loadPaymentProviderByIdUsecaseProxy';
+  static POST_LOAD_BY_ID_PAYMENT_PROVIDER_USECASE_PROXY = 'loadPaymentProviderByIdUsecaseProxy';  static POST_NOTIFY_PAYMENT_GENERATE_QR_USECASE_PROXY = 'notifyPaymentGenerateQrUsecaseProxy';  static POST_RETRY_PAYMENT_GENERATE_QR_USECASE_PROXY = 'retryPaymentGenerateQrUsecaseProxy';
+
+
 
 
   static register(): DynamicModule {
@@ -45,7 +47,9 @@ export class UsecasesProxyModule {
         UsecasesProxyModule.POST_UPDATE_PAYMENT_PROVIDER_USECASE_PROXY,
         UsecasesProxyModule.POST_DELETE_PAYMENT_PROVIDER_USECASE_PROXY,
         UsecasesProxyModule.POST_LOAD_ALL_PAYMENT_PROVIDER_USECASE_PROXY,
-        UsecasesProxyModule.POST_LOAD_BY_ID_PAYMENT_PROVIDER_USECASE_PROXY,],
+        UsecasesProxyModule.POST_LOAD_BY_ID_PAYMENT_PROVIDER_USECASE_PROXY,
+        UsecasesProxyModule.POST_NOTIFY_PAYMENT_GENERATE_QR_USECASE_PROXY,
+        UsecasesProxyModule.POST_RETRY_PAYMENT_GENERATE_QR_USECASE_PROXY,],
     };
   }
 }

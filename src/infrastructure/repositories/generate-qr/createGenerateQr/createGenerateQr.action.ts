@@ -140,6 +140,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         ref3: qrBody.ref3,
         mobileNum: qrBody.mobileNum,
         deeplinkMetaData: qrBody.deeplinkMetaData,
+        deeplinkInfo: this.qrApiResponse?.dataResponse?.deeplinkInfo || null,
         metadata: qrBody.metadata,
         callbackUrl: qrBody.callbackUrl,
         callbackKey: qrBody.callbackKey,
@@ -208,7 +209,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
       ref3: params.ref3 || `POS-${new Date().getFullYear()}`,
       mobileNum: params.mobileNum || '2099490807',
       deeplinkMetaData: params.deeplinkMetaData || {
-        deeplink: 'N',
+        deeplink: 'Y',
         switchBackURL: null,
         switchBackInfo: null,
       },
@@ -246,7 +247,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         headers: apiHeaders,
       });
 
-      // console.log('LDB QR apiResponse ====>', response.data);
+      console.log('LDB QR apiResponse ====>', response.data);
       return response.data;
     } catch (error) {
       console.error('ERROR callLdbGenerateQr', error?.message);
@@ -284,6 +285,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         ref2: this.ref2,
         ref3: this.ref3,
         providerName: this.providerName,
+        deeplinkInfo: dataResponse?.deeplinkInfo || null,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
       };
