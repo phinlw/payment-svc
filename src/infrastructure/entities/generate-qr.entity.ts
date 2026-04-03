@@ -2,8 +2,12 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 export enum GenerateQrStatus {
   PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
   COMPLETE = 'COMPLETE',
+  FAILED = 'FAILED',
+  EXPIRED = 'EXPIRED',
   CANCEL = 'CANCEL',
+  REFUNDED = 'REFUNDED',
 }
 
 @Entity({

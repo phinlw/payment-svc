@@ -2,8 +2,12 @@ import { DefaultModel } from "./base.model";
 
 export enum GenerateQrStatus {
   PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
   COMPLETE = 'COMPLETE',
+  FAILED = 'FAILED',
+  EXPIRED = 'EXPIRED',
   CANCEL = 'CANCEL',
+  REFUNDED = 'REFUNDED',
 }
 
 export class GenerateQrModel extends DefaultModel {
