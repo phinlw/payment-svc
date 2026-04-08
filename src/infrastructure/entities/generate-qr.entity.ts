@@ -75,6 +75,9 @@ export class GenerateQrEntity {
   metadata: string;
 
   @Column()
+  transactionId: string;
+
+  @Column()
   qrCode: string;
 
   @Column({ nullable: true })

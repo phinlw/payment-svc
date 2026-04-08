@@ -29,6 +29,7 @@ export class GenerateQrModel extends DefaultModel {
   deeplinkMetaData?: DeeplinkMetaData;
   deeplinkInfo?: any;
   metadata?: string;
+  transactionId?: string;
   qrCode?: string;
   qrCodeUrl?: string;
   callbackUrl?: string;
@@ -81,6 +82,7 @@ export class CreateGenerateQrResponse {
   ref2?: string;
   ref3?: string;
   providerName?: string;
+  transactionId?: string;
   deeplinkInfo?: any;
   createdAt?: Date;
   updatedAt?: Date;
@@ -173,6 +175,19 @@ export class RetryPaymentData {
   isActive?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  inquiry?: RetryPaymentInquiryData;
+}
+
+export class RetryPaymentInquiryData {
+  processingStatus?: string;
+  paymentBank?: string;
+  paymentAt?: string;
+  paymentReference?: string;
+  inquiryAmount?: number;
+  inquiryCurrency?: string;
+  payerName?: string;
+  contact?: string;
+  txNo?: string;
 }
 
 export class RetryPaymentResponse {

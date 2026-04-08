@@ -76,6 +76,7 @@ export async function fetchAccessToken(): Promise<string> {
 
 export function generateLdbHeaders(body: any, accessToken?: string): LdbHeaders {
   const transactionId = uuidv4();
+  // console.log('transactionId', transactionId);
   const transactionDatetime = getTxnDateTimeISO8601();
 
   const bodyString = JSON.stringify(body);
@@ -113,3 +114,4 @@ export function generateLdbHeaders(body: any, accessToken?: string): LdbHeaders 
 export function getLdbApiUrl(): string {
   return LDB_URL || '';
 }
+

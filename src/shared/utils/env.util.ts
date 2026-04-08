@@ -3,7 +3,8 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const ISSUER_WALLET_OWNERID = process.env.ISSUER_WALLET_OWNERID;
-export const ISSUER_WALLET_OWNERID_CATEGORY = process.env.ISSUER_WALLET_OWNERID_CATEGORY;
+export const ISSUER_WALLET_OWNERID_CATEGORY =
+  process.env.ISSUER_WALLET_OWNERID_CATEGORY;
 
 export const ENCRYPT_TEXT_KEY = process.env.ENCRYPT_TEXT_KEY;
 export const PROTO_WALLET_SVC_SYNC = process.env.PROTO_WALLET_SVC_SYNC;
@@ -23,3 +24,4 @@ export const LDB_URL_GEN_QR = process.env.LDB_URL_GEN_QR;
 export const LDB_URL = process.env.LDB_URL;
 export const LDB_BEARER_TOKEN = process.env.LDB_BEARER_TOKEN;
 export const LDB_AUTH_URL = process.env.LDB_AUTH_URL;
+export const LDB_URL_INQUIRY = process.env.LDB_URL_INQUIRY;

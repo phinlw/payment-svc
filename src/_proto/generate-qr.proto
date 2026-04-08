@@ -52,6 +52,7 @@ message CreateGenerateQrResponse {
     string ref3 = 9;
     string providerName = 10;
     DeeplinkInfo deeplinkInfo = 11;
+    string transactionId = 12;
     string createdAt = 102;
     string updatedAt = 103;
 }

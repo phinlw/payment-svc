@@ -1,13 +1,31 @@
 import { QueryRunner } from 'typeorm';
-import { RetryPaymentRequest, RetryPaymentResponse } from '@domain/models/generate-qr.model';
+import {
+  RetryPaymentRequest,
+  RetryPaymentResponse,
+  RetryPaymentInquiryData,
+} from '@domain/models/generate-qr.model';
 import { GenerateQrEntity, GenerateQrStatus } from '@infrastructure/entities/generate-qr.entity';
+import {
+  inquiryPayment,
+  InquiryTxnItem,
+  InquiryPaymentResponse,
+} from '@shared/utils/ldb-inquiry.util';
+
+interface CallInquiryResult {
+  success: boolean;
+  txnItem?: InquiryTxnItem;
+  inquiryStatus?: string;
+  inquiryMessage?: string;
+}
 
 export class RetryPaymentAction {
   private _id: string;
 
   constructor(private readonly session: QueryRunner) {}
 
-  public async execute(params: RetryPaymentRequest): Promise<RetryPaymentResponse> {
+  public async execute(
+    params: RetryPaymentRequest,
+  ): Promise<RetryPaymentResponse> {
     try {
       this.buildParams(params);
       return await this.performRetryPayment();
@@ -29,7 +47,7 @@ export class RetryPaymentAction {
   }
 
   /**
-   * Find record by _id, check status, update to COMPLETE if not already complete
+   * Find record by _id, call LDB inquiry API to verify payment, then update status
    */
   private async performRetryPayment(): Promise<RetryPaymentResponse> {
     const entity = await this.session.manager.findOne(GenerateQrEntity, {
@@ -53,6 +71,40 @@ export class RetryPaymentAction {
       };
     }
 
+    /**
+     * Call LDB inquiry API to check if payment was actually completed
+     */
+    const inquiryResult = await this.callInquiry(entity);
+
+    if (!inquiryResult.success || !inquiryResult.txnItem) {
+      return {
+        code: 400,
+        status: inquiryResult.inquiryStatus || 'INQUIRY_FAILED',
+        message:
+          inquiryResult.inquiryMessage ||
+          `Inquiry API returned no result for _id: ${this._id}`,
+        data: this.mapEntityToData(entity),
+      };
+    }
+
+    const txnItem = inquiryResult.txnItem;
+
+    /**
+     * Check processingStatus from inquiry response
+     * FNLD = Finalized (payment confirmed)
+     */
+    if (txnItem.processingStatus !== 'FNLD') {
+      return {
+        code: 400,
+        status: 'PAYMENT_NOT_CONFIRMED',
+        message: `Payment not confirmed. processingStatus: ${txnItem.processingStatus}`,
+        data: this.mapEntityToData(entity, this.mapInquiryToData(txnItem)),
+      };
+    }
+
+    /**
+     * Payment confirmed — update record to COMPLETE
+     */
     await this.session.manager.update(
       GenerateQrEntity,
       { _id: this._id },
@@ -75,14 +127,92 @@ export class RetryPaymentAction {
       code: 200,
       status: 'OK',
       message: 'Successful.',
-      data: this.mapEntityToData(updated),
+      data: this.mapEntityToData(updated, this.mapInquiryToData(txnItem)),
+    };
+  }
+
+  /**
+   * Call LDB inquiry API using entity transactionId, ref2, and qrType
+   */
+  private async callInquiry(
+    entity: GenerateQrEntity,
+  ): Promise<CallInquiryResult> {
+    try {
+      const transactionId = entity.transactionId;
+      const ref2 = entity.ref2;
+      const qrType = entity.qrType || 'LAO_QR';
+
+      if (!transactionId || !ref2) {
+        console.error('ERROR callInquiry: missing transactionId or ref2', {
+          transactionId,
+          ref2,
+        });
+        return {
+          success: false,
+          inquiryStatus: 'INQUIRY_FAILED',
+          inquiryMessage: `Missing transactionId or ref2 for _id: ${this._id}`,
+        };
+      }
+
+      const inquiryResponse = await inquiryPayment(transactionId, ref2, qrType);
+
+      if (inquiryResponse.status !== '00') {
+        // console.error(
+        //   'ERROR callInquiry: inquiry status not OK====>',
+        //   inquiryResponse,
+        // );
+        return {
+          success: false,
+          inquiryStatus: inquiryResponse.status,
+          inquiryMessage: inquiryResponse.message,
+        };
+      }
+
+      const txnItems = inquiryResponse.dataResponse?.txnItem;
+      if (!txnItems || txnItems.length === 0) {
+        console.error('ERROR callInquiry: no txnItem found');
+        return {
+          success: false,
+          inquiryStatus: 'INQUIRY_EMPTY',
+          inquiryMessage: 'Inquiry returned no transaction items',
+        };
+      }
+
+      return { success: true, txnItem: txnItems[0] };
+    } catch (error) {
+      console.error('ERROR callInquiry', error?.message);
+      return {
+        success: false,
+        inquiryStatus: 'INQUIRY_ERROR',
+        inquiryMessage: error?.message || String(error),
+      };
+    }
+  }
+
+  /**
+   * Map inquiry txnItem to RetryPaymentInquiryData
+   */
+  private mapInquiryToData(txnItem: InquiryTxnItem): RetryPaymentInquiryData {
+    return {
+      processingStatus: txnItem.processingStatus,
+      paymentBank: txnItem.paymentBank,
+      paymentAt: txnItem.paymentAt,
+      paymentReference: txnItem.paymentReference,
+      inquiryAmount: txnItem.amount,
+      inquiryCurrency: txnItem.currency,
+      payerName: txnItem.payerName,
+      contact: txnItem.contact,
+      txNo: txnItem.txNo,
     };
   }
 
   /**
    * Map entity to response data
    */
-  private mapEntityToData(entity: GenerateQrEntity) {
+  private mapEntityToData(
+    entity: GenerateQrEntity,
+    inquiry?: RetryPaymentInquiryData,
+  ) {
     return {
       _id: entity._id,
       uniqueId: entity.uniqueId,
@@ -109,6 +239,7 @@ export class RetryPaymentAction {
       isActive: entity.isActive,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
+      inquiry,
     };
   }
 }

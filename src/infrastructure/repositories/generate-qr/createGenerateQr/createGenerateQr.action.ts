@@ -17,6 +17,7 @@ import {
 export class CreateGenerateQrAction extends GenerateQrModel {
   private qrApiResponse: any = null;
   private providerName: string = '';
+  private ldbTransactionId: string = '';
 
   constructor(private readonly session: QueryRunner) {
     super();
@@ -142,6 +143,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         deeplinkMetaData: qrBody.deeplinkMetaData,
         deeplinkInfo: this.qrApiResponse?.dataResponse?.deeplinkInfo || null,
         metadata: qrBody.metadata,
+        transactionId: this.ldbTransactionId,
         callbackUrl: qrBody.callbackUrl,
         callbackKey: qrBody.callbackKey,
         qrCode: this.qrApiResponse?.dataResponse?.qrCode || '',
@@ -226,6 +228,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
     try {
       const accessToken = await fetchAccessToken();
       const headers = generateLdbHeaders(body, accessToken);
+      this.ldbTransactionId = headers['x-client-transaction-id'];
       const apiUrl = getLdbApiUrl();
 
       if (!apiUrl) {
@@ -247,7 +250,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         headers: apiHeaders,
       });
 
-      console.log('LDB QR apiResponse ====>', response.data);
+      // console.log('LDB QR apiResponse ====>', response.data);
       return response.data;
     } catch (error) {
       console.error('ERROR callLdbGenerateQr', error?.message);
@@ -285,6 +288,7 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         ref2: this.ref2,
         ref3: this.ref3,
         providerName: this.providerName,
+        transactionId: this.ldbTransactionId,
         deeplinkInfo: dataResponse?.deeplinkInfo || null,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
