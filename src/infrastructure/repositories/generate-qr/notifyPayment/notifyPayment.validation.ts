@@ -1,10 +1,16 @@
-import { NotifyPaymentRequest } from '@domain/models/generate-qr.model';
-import { GenerateQrEntity } from '@infrastructure/entities/generate-qr.entity';
-import { Repository } from 'typeorm';
-import { validateMultiple, validateText, validateNumber } from '@shared/utils/base.util';
+import { NotifyPaymentRequest } from "@domain/models/generate-qr.model";
+import { GenerateQrEntity } from "@infrastructure/entities/generate-qr.entity";
+import { Repository } from "typeorm";
+import {
+  validateMultiple,
+  validateText,
+  validateNumber,
+} from "@shared/utils/base.util";
 
 export class NotifyPaymentValidation extends NotifyPaymentRequest {
-  constructor(private readonly generateQrRepository: Repository<GenerateQrEntity>) {
+  constructor(
+    private readonly generateQrRepository: Repository<GenerateQrEntity>
+  ) {
     super();
   }
 
@@ -25,12 +31,12 @@ export class NotifyPaymentValidation extends NotifyPaymentRequest {
       this.partnerPaymentID = params.partnerPaymentID;
       this.paymentBank = params.paymentBank;
       this.paymentAt = params.paymentAt;
-      this.PaymentReference = params.PaymentReference;
+      this.paymentReference = params.paymentReference;
       this.amount = params.amount;
       this.currency = params.currency;
     } catch (error) {
-      console.log('ERROR buildParams', error?.message);
-      throw new Error(error?.message || 'Unknown error');
+      console.log("ERROR buildParams", error?.message);
+      throw new Error(error?.message || "Unknown error");
     }
   }
 
@@ -71,7 +77,7 @@ export class NotifyPaymentValidation extends NotifyPaymentRequest {
           maxLength: 50,
           allowEmpty: false,
         }),
-        PaymentReference: validateText(this.PaymentReference, {
+        paymentReference: validateText(this.paymentReference, {
           required: true,
           minLength: 1,
           maxLength: 255,
@@ -92,12 +98,12 @@ export class NotifyPaymentValidation extends NotifyPaymentRequest {
       if (!validationResults.isValid) {
         const errorMessages = Object.entries(validationResults.errors)
           .map(([field, message]) => `${field}: ${message}`)
-          .join(', ');
+          .join(", ");
         throw new Error(`Validation failed: ${errorMessages}`);
       }
     } catch (error) {
-      console.log('ERROR validateParams', error?.message);
-      throw new Error(error?.message || 'Unknown error');
+      console.log("ERROR validateParams", error?.message);
+      throw new Error(error?.message || "Unknown error");
     }
   }
 }

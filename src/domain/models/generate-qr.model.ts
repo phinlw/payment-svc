@@ -1,13 +1,13 @@
 import { DefaultModel } from "./base.model";
 
 export enum GenerateQrStatus {
-  PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
-  COMPLETE = 'COMPLETE',
-  FAILED = 'FAILED',
-  EXPIRED = 'EXPIRED',
-  CANCEL = 'CANCEL',
-  REFUNDED = 'REFUNDED',
+  PENDING = "PENDING",
+  PROCESSING = "PROCESSING",
+  COMPLETE = "COMPLETE",
+  FAILED = "FAILED",
+  EXPIRED = "EXPIRED",
+  CANCEL = "CANCEL",
+  REFUNDED = "REFUNDED",
 }
 
 export class GenerateQrModel extends DefaultModel {
@@ -36,7 +36,6 @@ export class GenerateQrModel extends DefaultModel {
   callbackKey?: string;
   status?: string;
 }
-
 
 export class ResponseGenerateQrModel extends GenerateQrModel {}
 
@@ -134,7 +133,7 @@ export class NotifyPaymentRequest {
   partnerPaymentID: string;
   paymentBank: string;
   paymentAt: string;
-  PaymentReference: string;
+  paymentReference: string;
   amount: number;
   currency: string;
 }

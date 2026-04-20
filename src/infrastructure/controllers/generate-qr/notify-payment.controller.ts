@@ -24,7 +24,7 @@ export class NotifyPaymentController {
         .getInstance()
         .execute(params);
       return result;
-    } catch (error) {
+    } catch (error: any) {
       const message = error?.message || String(error);
       throw new HttpException(
         { code: 400, status: 'ERROR', message },
