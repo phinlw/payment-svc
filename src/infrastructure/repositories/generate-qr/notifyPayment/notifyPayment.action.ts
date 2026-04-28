@@ -12,6 +12,9 @@ import {
   InquiryTxnItem,
   InquiryPaymentResponse,
 } from "@shared/utils/ldb-inquiry.util";
+import axios from "axios";
+
+const GRAPHQL_CALLBACK_URL = "http://202.137.130.93:7050/api-gateway";
 
 interface CallInquiryResult {
   success: boolean;
@@ -81,34 +84,43 @@ export class NotifyPaymentAction {
         });
       }
 
+      if (!entity) {
+        throw new Error(
+          `QR record not found for partnerOrderID: ${this.partnerOrderID}`
+        );
+      }
+
+      if (entity.status === GenerateQrStatus.COMPLETE) {
+        // await this.callGraphQLCallback(entity);
+        console.log(
+          `QR record already completed for partnerOrderID: ${this.partnerOrderID}, skipping.`
+        );
+        return;
+      }
+
       // Call LDB inquiry API to verify payment status
-      const inquiryResult = entity && (await this.callInquiry(entity));
-      console.log("inquiryResult====>", inquiryResult);
+      const inquiryResult = await this.callInquiry(entity);
+      // console.log("inquiryResult====>", inquiryResult);
 
       if (!inquiryResult?.success || !inquiryResult.txnItem) {
         console.log("DEBUG inquiry failed:", inquiryResult);
-      } else {
-        const txnItem = inquiryResult.txnItem;
-        console.log("DEBUG inquiry result:", {
-          processingStatus: txnItem.processingStatus,
-          paymentBank: txnItem.paymentBank,
-          amount: txnItem.amount,
-        });
+        return;
       }
 
-      if (!entity || entity?.status === GenerateQrStatus.COMPLETE) {
-        throw new Error(
-          `QR record already completed for partnerOrderID: ${this.partnerOrderID}`
-        );
-      }
+      const txnItem = inquiryResult.txnItem;
+      console.log("DEBUG inquiry result:", {
+        processingStatus: txnItem.processingStatus,
+        paymentBank: txnItem.paymentBank,
+        amount: txnItem.amount,
+      });
 
-      if (inquiryResult?.inquiryStatus === "00") {
-        await this.session.manager.update(
-          GenerateQrEntity,
-          { _id: entity._id },
-          { status: GenerateQrStatus.COMPLETE, updatedAt: new Date() }
-        );
-      }
+      await this.session.manager.update(
+        GenerateQrEntity,
+        { _id: entity._id },
+        { status: GenerateQrStatus.COMPLETE, updatedAt: new Date() }
+      );
+      // Fire-and-forget: do not block the response on the GraphQL callback
+      void this.callGraphQLCallback(entity);
     } catch (error: any) {
       console.error("ERROR performNotifyPayment", error?.message);
       throw new Error(
@@ -168,6 +180,77 @@ export class NotifyPaymentAction {
         inquiryStatus: "INQUIRY_ERROR",
         inquiryMessage: error?.message || String(error),
       };
+    }
+  }
+
+  /**
+   * Call GraphQL callback to notify upstream service of payment confirmation
+   */
+  private async callGraphQLCallback(entity: GenerateQrEntity): Promise<void> {
+    try {
+      const mutation = `
+        mutation UpdateCallbackConfirmTopupBankQR($input: UpdateCallbackConfirmTopupBankQRDto!) {
+          updateCallbackConfirmTopupBankQR(input: $input) {
+          generateId
+          amount
+          description
+          tag
+          createdAt
+          remainAmount
+          uniqueId
+          method
+          }
+        }
+      `;
+
+      const variables = {
+        input: {
+          callbackKey: entity.callbackKey,
+          referenceId: entity._id,
+        },
+      };
+
+      // console.log(variables);
+
+      const response = await axios.post(
+        GRAPHQL_CALLBACK_URL,
+        { query: mutation, variables },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            backendKey: "951ea066-48ab-490a-894c-d769f80d4653",
+            platform: "wallet_svc",
+          },
+        }
+      );
+
+      const data = response.data;
+      console.log("data GraphQL====>", data);
+
+      if (data?.errors) {
+        console.error(
+          "GraphQL callback returned errors:",
+          JSON.stringify(data.errors, null, 2)
+        );
+      } else {
+        console.log("GraphQL callback response:", JSON.stringify(data));
+        return;
+      }
+    } catch (error: any) {
+      const gqlErrors = error.response?.data?.errors;
+      if (gqlErrors) {
+        console.error(
+          "ERROR callGraphQLCallback GraphQL errors:",
+          JSON.stringify(gqlErrors, null, 2)
+        );
+      } else {
+        console.error(
+          "ERROR callGraphQLCallback",
+          error?.message,
+          "response body:",
+          JSON.stringify(error.response?.data)
+        );
+      }
     }
   }
 
