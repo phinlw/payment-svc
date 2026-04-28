@@ -19,6 +19,7 @@ services:
       replicas: 1
     ports:
       - "7069:7069"
+      - "7070:7070"
 networks:
   share-container-network:
     external: true

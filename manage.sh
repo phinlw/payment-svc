@@ -311,8 +311,8 @@ fix_nodemodules() {
     # docker builder prune -f
     
     # Remove images for this project
-    docker rmi "${PROJECT_NAME}-thirdparty" 2>/dev/null || true
-    docker rmi "thirdparty-image:latest" 2>/dev/null || true
+    docker rmi "${PROJECT_NAME}-payment-svc" 2>/dev/null || true
+    docker rmi "payment-svc-image:latest" 2>/dev/null || true
     
     # Remove any dangling images
     docker image prune -f
@@ -339,7 +339,7 @@ clean() {
 exec_service() {
     if [ -z "$2" ]; then
         print_error "Please specify a service name"
-        print_status "Available services: thirdparty, nginx"
+        print_status "Available services: payment-svc"
         exit 1
     fi
     
@@ -390,13 +390,14 @@ show_help() {
     echo "  $0 start              # Production start"
     echo "  $0 dev                # Development with logs"
     echo "  $0 dev:rebuild        # Rebuild and dev mode"
-    echo "  $0 logs thirdparty    # View specific service logs"
-    echo "  $0 exec thirdparty /bin/bash"
-    echo "  $0 exec thirdparty npm install"
+    echo "  $0 logs payment-svc   # View specific service logs"
+    echo "  $0 exec payment-svc /bin/sh"
+    echo "  $0 exec payment-svc pnpm install"
     echo ""
     echo "Services available:"
-    echo "  - thirdparty (main application)"
-    echo "  - nginx (reverse proxy)"
+    echo "  - payment-svc (main application)"
+    echo "    gRPC  port: 7069"
+    echo "    REST  port: 7070"
 }
 
 # Main script logic

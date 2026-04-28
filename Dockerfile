@@ -24,8 +24,9 @@ COPY . .
 # Compile TypeScript code
 RUN pnpm run build
 
-# Expose the port your app runs on
+# Expose gRPC and REST API ports
 EXPOSE 7069
+EXPOSE 7070
 
 # Command to run your application 
 CMD ["pnpm", "run", "start"]
