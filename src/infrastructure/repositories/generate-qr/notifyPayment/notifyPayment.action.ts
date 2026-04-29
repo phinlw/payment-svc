@@ -80,7 +80,7 @@ export class NotifyPaymentAction {
       // Direct match on transactionId
       if (!entity) {
         entity = await this.session.manager.findOne(GenerateQrEntity, {
-          where: { transactionId: this.partnerOrderID },
+          where: { ref1: this.partnerOrderID },
         });
       }
 
