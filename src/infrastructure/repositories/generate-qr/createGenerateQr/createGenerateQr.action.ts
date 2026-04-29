@@ -201,27 +201,27 @@ export class CreateGenerateQrAction extends GenerateQrModel {
   ): Record<string, any> {
     // console.log('buildQrRequestBody', params);
     return {
-      qrType: params.qrType || "38",
-      platformType: params.platformType || "IOS",
-      merchantId: params.merchantId || "MCH22300LIOL4340",
+      qrType: params.qrType || '38',
+      platformType: params.platformType || 'IOS',
+      merchantId: 'MCH25056SXSM2111',
       terminalId: params.terminalId || null,
       promotionCode: params.promotionCode || null,
-      expiryTime: params.expiryTime || "5",
-      makeTxnTime: params.makeTxnTime || "1",
+      expiryTime: params.expiryTime || '5',
+      makeTxnTime: params.makeTxnTime || '1',
       amount: params.amount || 1,
-      currency: params.currency || "LAK",
+      currency: params.currency || 'LAK',
       ref1: params.ref1 || `BILL${Date.now().toString().slice(-6)}`,
       ref2: params.ref2 || `POSREF${Date.now().toString().slice(-8)}`,
       ref3: params.ref3 || `POS-${new Date().getFullYear()}`,
-      mobileNum: params.mobileNum || "2099490807",
+      mobileNum: params.mobileNum || '2099490807',
       deeplinkMetaData: params.deeplinkMetaData || {
-        deeplink: "Y",
-        switchBackURL: "https://ldbpay.laoworld.la/notify-payment",
+        deeplink: 'Y',
+        switchBackURL: 'https://ldbpay.laoworld.la/notify-payment',
         switchBackInfo: null,
       },
-      metadata: params.metadata || "",
-      callbackUrl: params.callbackUrl || "",
-      callbackKey: params.callbackKey || "",
+      metadata: params.metadata || '',
+      callbackUrl: params.callbackUrl || '',
+      callbackKey: params.callbackKey || '',
     };
   }
 

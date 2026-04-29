@@ -217,23 +217,23 @@ export class NotifyPaymentAction {
         { query: mutation, variables },
         {
           headers: {
-            "Content-Type": "application/json",
-            backendKey: "951ea066-48ab-490a-894c-d769f80d4653",
-            platform: "wallet_svc",
+            'Content-Type': 'application/json',
+            backendKey: '951ea066-48ab-490a-894c-d769f80d4653',
+            platform: 'wallet_svc',
           },
-        }
+        },
       );
 
       const data = response.data;
-      console.log("data GraphQL====>", data);
+      // console.log("data GraphQL====>", data);
 
       if (data?.errors) {
         console.error(
-          "GraphQL callback returned errors:",
-          JSON.stringify(data.errors, null, 2)
+          'GraphQL callback returned errors:',
+          JSON.stringify(data.errors, null, 2),
         );
       } else {
-        console.log("GraphQL callback response:", JSON.stringify(data));
+        console.log('GraphQL callback response:', JSON.stringify(data));
         return;
       }
     } catch (error: any) {
