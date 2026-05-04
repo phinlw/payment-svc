@@ -218,10 +218,11 @@ export class NotifyPaymentAction {
 
       console.log("variables=====>", variables);
 
-      const callbackUrl =
-        GRAPHQL_CALLBACK_URL || "http://api-gateway:7050/api-gateway" || "";
+      const callbackUrl = entity.callbackUrl || GRAPHQL_CALLBACK_URL || "";
+      console.log("callbackUrl===>", callbackUrl);
+
       const response = await axios.post(
-        callbackUrl,
+        "host.docker.internal:7050/api-gateway",
         { query: mutation, variables },
         {
           headers: {
@@ -229,6 +230,7 @@ export class NotifyPaymentAction {
             backendKey: "951ea066-48ab-490a-894c-d769f80d4653",
             platform: "wallet_svc",
           },
+          timeout: 10000,
         }
       );
 
