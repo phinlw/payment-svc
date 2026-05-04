@@ -210,6 +210,8 @@ export class NotifyPaymentAction {
         }
       `;
 
+      console.log("entity=====>IN", entity);
+
       const variables = {
         input: {
           callbackKey: entity.callbackKey,
@@ -220,7 +222,7 @@ export class NotifyPaymentAction {
       console.log("variables=====>", variables);
 
       const response = await axios.post(
-        GRAPHQL_CALLBACK_URL,
+        entity.callbackUrl,
         { query: mutation, variables },
         {
           headers: {
