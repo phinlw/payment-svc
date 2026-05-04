@@ -231,6 +231,8 @@ export class NotifyPaymentAction {
         }
       );
 
+      console.log("response==+=====>", response);
+
       const data = response.data;
       console.log("data GraphQL====>", data);
 
