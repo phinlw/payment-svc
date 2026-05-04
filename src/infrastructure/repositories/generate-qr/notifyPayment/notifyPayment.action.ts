@@ -222,7 +222,7 @@ export class NotifyPaymentAction {
       console.log("callbackUrl===>", callbackUrl);
 
       const response = await axios.post(
-        "host.docker.internal:7050/api-gateway",
+        "http://host.docker.internal:7050/api-gateway",
         { query: mutation, variables },
         {
           headers: {
