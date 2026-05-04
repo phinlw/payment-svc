@@ -35,10 +35,13 @@ export class NotifyPaymentAction {
     params: NotifyPaymentRequest
   ): Promise<NotifyPaymentResponse> {
     try {
-      // console.log("param====>", params);
+      console.log("param====>", params);
 
       this.buildParams(params);
-      await this.performNotifyPayment();
+      const completed = await this.performNotifyPayment();
+      if (!completed) {
+        return { code: 400, status: "NO", message: "waiting payment" };
+      }
       return this.buildResponse();
     } catch (error: any) {
       console.error("ERROR NotifyPaymentAction.execute", error?.message);
@@ -63,7 +66,7 @@ export class NotifyPaymentAction {
    * LDB sends partnerOrderID as "ite" + UUID-without-dashes
    * DB stores transactionId as UUID-with-dashes
    */
-  private async performNotifyPayment(): Promise<void> {
+  private async performNotifyPayment(): Promise<boolean> {
     try {
       // console.log("DEBUG performNotifyPayment searching with:", {
       //   partnerOrderID: this.partnerOrderID,
@@ -91,11 +94,11 @@ export class NotifyPaymentAction {
       }
 
       if (entity.status === GenerateQrStatus.COMPLETE) {
-        // await this.callGraphQLCallback(entity);
+        await this.callGraphQLCallback(entity);
         console.log(
           `QR record already completed for partnerOrderID: ${this.partnerOrderID}, skipping.`
         );
-        return;
+        return true;
       }
 
       // Call LDB inquiry API to verify payment status
@@ -104,7 +107,7 @@ export class NotifyPaymentAction {
 
       if (!inquiryResult?.success || !inquiryResult.txnItem) {
         console.log("DEBUG inquiry failed:", inquiryResult);
-        return;
+        return false;
       }
 
       const txnItem = inquiryResult.txnItem;
@@ -120,7 +123,8 @@ export class NotifyPaymentAction {
         { status: GenerateQrStatus.COMPLETE, updatedAt: new Date() }
       );
       // Fire-and-forget: do not block the response on the GraphQL callback
-      void this.callGraphQLCallback(entity);
+      this.callGraphQLCallback(entity);
+      return true;
     } catch (error: any) {
       console.error("ERROR performNotifyPayment", error?.message);
       throw new Error(
@@ -217,11 +221,11 @@ export class NotifyPaymentAction {
         { query: mutation, variables },
         {
           headers: {
-            'Content-Type': 'application/json',
-            backendKey: '951ea066-48ab-490a-894c-d769f80d4653',
-            platform: 'wallet_svc',
+            "Content-Type": "application/json",
+            backendKey: "951ea066-48ab-490a-894c-d769f80d4653",
+            platform: "wallet_svc",
           },
-        },
+        }
       );
 
       const data = response.data;
@@ -229,11 +233,11 @@ export class NotifyPaymentAction {
 
       if (data?.errors) {
         console.error(
-          'GraphQL callback returned errors:',
-          JSON.stringify(data.errors, null, 2),
+          "GraphQL callback returned errors:",
+          JSON.stringify(data.errors, null, 2)
         );
       } else {
-        console.log('GraphQL callback response:', JSON.stringify(data));
+        console.log("GraphQL callback response:", JSON.stringify(data));
         return;
       }
     } catch (error: any) {
