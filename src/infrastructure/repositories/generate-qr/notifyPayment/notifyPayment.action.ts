@@ -122,6 +122,9 @@ export class NotifyPaymentAction {
         { _id: entity._id },
         { status: GenerateQrStatus.COMPLETE, updatedAt: new Date() }
       );
+
+      console.log("entity=====>", entity);
+
       // Fire-and-forget: do not block the response on the GraphQL callback
       this.callGraphQLCallback(entity);
       return true;
@@ -214,7 +217,7 @@ export class NotifyPaymentAction {
         },
       };
 
-      // console.log(variables);
+      console.log("variables=====>", variables);
 
       const response = await axios.post(
         GRAPHQL_CALLBACK_URL,
@@ -229,7 +232,7 @@ export class NotifyPaymentAction {
       );
 
       const data = response.data;
-      // console.log("data GraphQL====>", data);
+      console.log("data GraphQL====>", data);
 
       if (data?.errors) {
         console.error(
