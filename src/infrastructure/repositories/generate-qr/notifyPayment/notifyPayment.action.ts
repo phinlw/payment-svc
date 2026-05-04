@@ -126,7 +126,7 @@ export class NotifyPaymentAction {
       console.log("entity=====>", entity);
 
       // Fire-and-forget: do not block the response on the GraphQL callback
-      this.callGraphQLCallback(entity);
+      await this.callGraphQLCallback(entity);
       return true;
     } catch (error: any) {
       console.error("ERROR performNotifyPayment", error?.message);
