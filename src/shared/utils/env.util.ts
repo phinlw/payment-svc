@@ -25,3 +25,4 @@ export const LDB_URL = process.env.LDB_URL;
 export const LDB_BEARER_TOKEN = process.env.LDB_BEARER_TOKEN;
 export const LDB_AUTH_URL = process.env.LDB_AUTH_URL;
 export const LDB_URL_INQUIRY = process.env.LDB_URL_INQUIRY;
+export const GRAPHQL_CALLBACK_URL = process.env.GRAPHQL_CALLBACK_URL;

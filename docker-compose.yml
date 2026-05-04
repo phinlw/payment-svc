@@ -14,7 +14,8 @@ services:
       - share-container-network
     extra_hosts:
       - 'host.docker.internal:host-gateway'
-      
+    environment:
+      - GRAPHQL_CALLBACK_URL=http://202.137.130.93:7050/api-gateway
     deploy:
       replicas: 1
     ports:

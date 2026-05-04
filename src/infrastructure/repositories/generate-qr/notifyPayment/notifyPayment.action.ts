@@ -13,8 +13,7 @@ import {
   InquiryPaymentResponse,
 } from "@shared/utils/ldb-inquiry.util";
 import axios from "axios";
-
-const GRAPHQL_CALLBACK_URL = "http://202.137.130.93:7050/api-gateway";
+import { GRAPHQL_CALLBACK_URL } from "@shared/utils/env.util";
 
 interface CallInquiryResult {
   success: boolean;
@@ -219,7 +218,8 @@ export class NotifyPaymentAction {
 
       console.log("variables=====>", variables);
 
-      const callbackUrl = entity.callbackUrl || GRAPHQL_CALLBACK_URL;
+      const callbackUrl =
+        GRAPHQL_CALLBACK_URL || "http://api-gateway:7050/api-gateway" || "";
       const response = await axios.post(
         callbackUrl,
         { query: mutation, variables },
