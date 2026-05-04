@@ -218,11 +218,11 @@ export class NotifyPaymentAction {
 
       console.log("variables=====>", variables);
 
-      const callbackUrl = entity.callbackUrl || GRAPHQL_CALLBACK_URL || "";
+      const callbackUrl = "https://dev-gateway.laoworld.la";
       console.log("callbackUrl===>", callbackUrl);
 
       const response = await axios.post(
-        "http://host.docker.internal:7050/api-gateway",
+        callbackUrl,
         { query: mutation, variables },
         {
           headers: {
