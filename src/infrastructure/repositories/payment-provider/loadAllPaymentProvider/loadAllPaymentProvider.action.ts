@@ -99,6 +99,7 @@ export class LoadAllPaymentProviderAction  extends LoadAllPaymentProviderRespons
         name: entity.name,
         img: entity.img,
         amount: entity.amount,
+        deeplink: entity.deeplink,
         isActive: entity.isActive,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,

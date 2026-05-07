@@ -79,6 +79,7 @@ export class LoadPaymentProviderByIdAction  extends LoadPaymentProviderByIdRespo
         this.name = entity.name;
         this.img = entity.img;
         this.amount = entity.amount;
+        this.deeplink = entity.deeplink;
         this.isActive = entity.isActive;
         this.createdAt = entity.createdAt;
         this.updatedAt = entity.updatedAt;
@@ -103,6 +104,7 @@ export class LoadPaymentProviderByIdAction  extends LoadPaymentProviderByIdRespo
           name: this.name,
           img: this.img,
           amount: this.amount,
+          deeplink: this.deeplink,
         };
       } catch (error) {
         console.error('ERROR buildResponse', error?.message);

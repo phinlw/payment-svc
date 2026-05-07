@@ -4,6 +4,7 @@ export class PaymentProviderModel extends DefaultModel {
   name: string;
   img?: string;
   amount?: number[];
+  deeplink?: string;
 }
 
 
@@ -13,6 +14,7 @@ export class CreatePaymentProviderRequest {
   name: string;
   img?: string;
   amount?: number[];
+  deeplink?: string;
 }
 
 export class CreatePaymentProviderResponse extends ResponsePaymentProviderModel {}
@@ -30,6 +32,7 @@ export class UpdatePaymentProviderRequest {
   name?: string;
   img?: string;
   amount?: number[];
+  deeplink?: string;
 }
 
 export class UpdatePaymentProviderResponse extends ResponsePaymentProviderModel {}

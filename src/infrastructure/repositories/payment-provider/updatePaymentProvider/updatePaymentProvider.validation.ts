@@ -15,6 +15,9 @@ export class UpdatePaymentProviderValidation extends UpdatePaymentProviderReques
         const response = {
          name: this.name,
           _id: this._id,
+          img: this.img,
+          amount: this.amount,
+          deeplink: this.deeplink,
         };
         return response;
       } catch (error) {
@@ -25,6 +28,9 @@ export class UpdatePaymentProviderValidation extends UpdatePaymentProviderReques
       try {
         this.name = params.name;
         this._id = params._id;
+        this.img = params.img;
+        this.amount = params.amount;
+        this.deeplink = params.deeplink;
 
         return 'BuildParams completed';
       } catch (error) {

@@ -29,6 +29,7 @@ export class CreatePaymentProviderAction  extends PaymentProviderModel {
       this.name = params.name;
       this.img = params.img;
       this.amount = params.amount;
+      this.deeplink = params.deeplink;
       this.isActive = true;
       this.createdAt = new Date();
       this.updatedAt = new Date();
@@ -49,6 +50,7 @@ export class CreatePaymentProviderAction  extends PaymentProviderModel {
         name: this.name,
         img: this.img,
         amount: this.amount,
+        deeplink: this.deeplink,
         isActive: this.isActive || true,
         createdAt: this.createdAt || new Date(),
         updatedAt: this.updatedAt || new Date(),
@@ -91,6 +93,7 @@ export class CreatePaymentProviderAction  extends PaymentProviderModel {
         name: this.name,
         img: this.img,
         amount: this.amount,
+        deeplink: this.deeplink,
         isActive: this.isActive,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,

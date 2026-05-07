@@ -32,6 +32,7 @@ export class UpdatePaymentProviderAction  extends UpdatePaymentProviderResponse 
         if (params.name !== undefined) this.name = params.name;
         if (params.img !== undefined) this.img = params.img;
         if (params.amount !== undefined) this.amount = params.amount;
+        if (params.deeplink !== undefined) this.deeplink = params.deeplink;
       } catch (error) {
         console.error('ERROR validateAndBuildParams', error?.message);
         throw new Error(`Failed to validate parameters: ${error?.message}`);
@@ -49,6 +50,7 @@ export class UpdatePaymentProviderAction  extends UpdatePaymentProviderResponse 
           name: this.name,
           img: this.img,
           amount: this.amount,
+          deeplink: this.deeplink,
         };
       } catch (error) {
         console.error('ERROR prepareUpdateModel', error?.message);
@@ -96,6 +98,7 @@ export class UpdatePaymentProviderAction  extends UpdatePaymentProviderResponse 
         this.name = entity.name;
         this.img = entity.img;
         this.amount = entity.amount;
+        this.deeplink = entity.deeplink;
         this.isActive = entity.isActive;
         this.createdAt = entity.createdAt;
         this.updatedAt = entity.updatedAt;
@@ -120,6 +123,7 @@ export class UpdatePaymentProviderAction  extends UpdatePaymentProviderResponse 
           name: this.name,
           img: this.img,
           amount: this.amount,
+          deeplink: this.deeplink,
         };
       } catch (error) {
         console.error('ERROR buildResponse', error?.message);

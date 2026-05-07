@@ -16,6 +16,7 @@ message CreatePaymentProviderRequest {
     string name = 1;
     string img = 2;
     repeated double amount = 3;
+    string deeplink = 4;
 }
 
 message CreatePaymentProviderResponse {
@@ -27,6 +28,7 @@ message CreatePaymentProviderResponse {
     string name = 1;
     string img = 2;
     repeated double amount = 3;
+    string deeplink = 4;
 }
 
 message DeletePaymentProviderRequest {
@@ -42,6 +44,7 @@ message UpdatePaymentProviderRequest {
     string name = 1;
     string img = 2;
     repeated double amount = 3;
+    string deeplink = 4;
 }
 
 message UpdatePaymentProviderResponse {
@@ -53,6 +56,7 @@ message UpdatePaymentProviderResponse {
     string name = 1;
     string img = 2;
     repeated double amount = 3;
+    string deeplink = 4;
 }
 
 message LoadAllPaymentProviderRequest {
@@ -77,6 +81,7 @@ message LoadPaymentProviderByIdResponse {
     string name = 1;
     string img = 2;
     repeated double amount = 3;
+    string deeplink = 4;
 }
 
 message ResponsePaymentProviderModel {
@@ -88,4 +93,5 @@ message ResponsePaymentProviderModel {
     string name = 1;
     string img = 2;
     repeated double amount = 3;
+    string deeplink = 4;
 }

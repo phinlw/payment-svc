@@ -19,6 +19,9 @@ export class PaymentProviderEntity {
   @Column({ type: 'jsonb', default: [] })
   amount: number[];
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  deeplink: string;
+
   @Column({ default: true })
   isActive: boolean;
 

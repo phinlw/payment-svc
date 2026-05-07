@@ -19,6 +19,9 @@ export class CreatePaymentProviderValidation  extends CreatePaymentProviderReque
 
         const response = {
           name: this.name,
+          img: this.img,
+          amount: this.amount,
+          deeplink: this.deeplink,
         };
         return response;
       } catch (error) {
@@ -29,6 +32,9 @@ export class CreatePaymentProviderValidation  extends CreatePaymentProviderReque
   private async buildParams(params: CreatePaymentProviderRequest): Promise<void> {
       try {
         this.name = params.name;
+        this.img = params.img;
+        this.amount = params.amount;
+        this.deeplink = params.deeplink;
 
       } catch (error) {
         console.log('ERROR InitParams', error?.message);

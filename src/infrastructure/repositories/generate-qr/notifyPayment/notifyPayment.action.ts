@@ -203,6 +203,7 @@ export class NotifyPaymentAction {
           remainAmount
           uniqueId
           method
+          deeplink
           }
         }
       `;
@@ -213,13 +214,14 @@ export class NotifyPaymentAction {
         input: {
           callbackKey: entity.callbackKey,
           referenceId: entity._id,
+          deeplink: entity.deeplink || "N",
         },
       };
 
-      console.log("variables=====>", variables);
+      // console.log("variables=====>", variables);
 
       const callbackUrl = "https://dev-gateway.laoworld.la";
-      console.log("callbackUrl===>", callbackUrl);
+      // console.log("callbackUrl===>", callbackUrl);
 
       const response = await axios.post(
         callbackUrl,
