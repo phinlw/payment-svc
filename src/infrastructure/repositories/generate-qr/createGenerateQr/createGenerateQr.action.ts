@@ -63,7 +63,8 @@ export class CreateGenerateQrAction extends GenerateQrModel {
     try {
       this.providerName = await this.validatePaymentProvider(
         params.paymentProviderId,
-        params.amount
+        params.amount,
+        params.deeplinkMetaData?.deeplink
       );
       this.paymentProviderId = params.paymentProviderId;
       this.userId = params.userId;
@@ -86,7 +87,8 @@ export class CreateGenerateQrAction extends GenerateQrModel {
    */
   private async validatePaymentProvider(
     paymentProviderId: string,
-    amount: number
+    amount: number,
+    deeplinkFlag?: string
   ): Promise<string> {
     if (!paymentProviderId) {
       throw new Error("paymentProviderId is required");
@@ -113,6 +115,17 @@ export class CreateGenerateQrAction extends GenerateQrModel {
         }`
       );
     }
+
+    if (deeplinkFlag === "Y" && !provider.deeplink) {
+      throw new Error(
+        `Payment provider '${provider.name}' does not have a deeplink configured`
+      );
+    }
+    this.deeplinkInfo = {
+      deeplink: provider.deeplink || "N",
+      switchBackURL: "https://ldbpay.laoworld.la/notify-payment",
+      switchBackInfo: null,
+    };
 
     return provider.name;
   }
@@ -201,27 +214,23 @@ export class CreateGenerateQrAction extends GenerateQrModel {
   ): Record<string, any> {
     // console.log('buildQrRequestBody', params);
     return {
-      qrType: params.qrType || '38',
-      platformType: params.platformType || 'IOS',
-      merchantId: 'MCH25056SXSM2111',
+      qrType: params.qrType || "38",
+      platformType: params.platformType || "IOS",
+      merchantId: "MCH25056SXSM2111",
       terminalId: params.terminalId || null,
       promotionCode: params.promotionCode || null,
-      expiryTime: params.expiryTime || '5',
-      makeTxnTime: params.makeTxnTime || '1',
+      expiryTime: params.expiryTime || "5",
+      makeTxnTime: params.makeTxnTime || "1",
       amount: params.amount || 1,
-      currency: params.currency || 'LAK',
+      currency: params.currency || "LAK",
       ref1: params.ref1 || `BILL${Date.now().toString().slice(-6)}`,
       ref2: params.ref2 || `POSREF${Date.now().toString().slice(-8)}`,
       ref3: params.ref3 || `POS-${new Date().getFullYear()}`,
-      mobileNum: params.mobileNum || '2099490807',
-      deeplinkMetaData: params.deeplinkMetaData || {
-        deeplink: 'Y',
-        switchBackURL: 'https://ldbpay.laoworld.la/notify-payment',
-        switchBackInfo: null,
-      },
-      metadata: params.metadata || '',
-      callbackUrl: params.callbackUrl || '',
-      callbackKey: params.callbackKey || '',
+      mobileNum: params.mobileNum || "2099490807",
+      deeplinkMetaData: this.deeplinkInfo,
+      metadata: params.metadata || "",
+      callbackUrl: params.callbackUrl || "",
+      callbackKey: params.callbackKey || "",
     };
   }
 
