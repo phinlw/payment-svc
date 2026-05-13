@@ -213,7 +213,6 @@ export class NotifyPaymentAction {
         input: {
           callbackKey: entity.callbackKey,
           referenceId: entity._id,
-          deeplink: entity.deeplink || "N",
         },
       };
 
