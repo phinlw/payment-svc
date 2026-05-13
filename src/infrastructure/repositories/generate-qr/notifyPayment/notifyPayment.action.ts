@@ -203,7 +203,6 @@ export class NotifyPaymentAction {
           remainAmount
           uniqueId
           method
-          deeplink
           }
         }
       `;
